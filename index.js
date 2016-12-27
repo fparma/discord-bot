@@ -19,6 +19,8 @@ Promise.all([
 ])
   .then(values => {
     const dbInstance = values[0];
+    console.log('Connected');
+
     commands.register(bot, dbInstance);
     announcements.startEventPolling(bot, dbInstance);
   })

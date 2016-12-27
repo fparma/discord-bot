@@ -77,7 +77,7 @@ const commandStats = {
         sendReply(message, reply);
       })
       .catch(err => {
-        err & console.error(err);
+        if (err) console.error(err);
         sendReply(message, 'Sorry, could not find that user')
       });
   }
@@ -95,7 +95,7 @@ const commandUpcoming = {
         sendReply(message, replies);
       })
       .catch(err => {
-        err && console.error(err);
+        if (err) console.error(err);
         sendReply(message, 'No upcoming events! :(');
       })
   }

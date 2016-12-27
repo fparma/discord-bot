@@ -11,9 +11,9 @@ const FPARMA_EVENT_URL = 'https://fparma.herokuapp.com/events/event/';
  */
 exports.connect = (url) => {
   return new Promise((resolve, reject) => {
-    MongoClient.connect(url, {auto_reconnect: true}, (err, db) => {
+    const options = {auto_reconnect: true, bufferMaxEntries: 10};
+    MongoClient.connect(url, options, (err, db) => {
       if (err) return reject(err);
-      console.info('Connected to DB');
       resolve(db);
     })
   });
