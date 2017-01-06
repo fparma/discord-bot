@@ -44,7 +44,6 @@ exports.stats = (db, userNameOrSteamId) => {
 /**
  * Poll events collections for new events.
  * // TODO: convert events to capped collection and use tail cursor instead of polling
- * this is pretty horrible because if more than 2 events is created within 30 sec, they won't be seen
  * @param db
  * @param callback
  */
