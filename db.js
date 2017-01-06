@@ -102,7 +102,7 @@ exports.upcoming = db => {
   const query = {date: {$gte: new Date()}};
   const options = {
     limit: 3,
-    sort: {date: -1}
+    sort: {date: 1}
   };
 
   return new Promise((resolve, reject) => {
