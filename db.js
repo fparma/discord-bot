@@ -60,7 +60,7 @@ exports.pollEvents = (db, callback) => {
 
   function poll () {
     const query = {date: {$gte: new Date()}};
-    const options = {limit: 2, sort: {date: 1}};
+    const options = {sort: {date: 1}};
     coll.find(query, options).toArray((e, res) => {
       if (e) return console.error(e);
 
