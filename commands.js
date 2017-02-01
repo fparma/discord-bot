@@ -1,6 +1,6 @@
 'use strict';
 
-const query = require('./db')
+const query = require('./db');
 const commands = new Map();
 
 /**
@@ -29,7 +29,7 @@ exports.register = (bot, db) => {
  * @param message - discord message
  * @param reply - string or stringarray
  */
-function sendReply (message, reply) {
+function sendReply(message, reply) {
   console.info('TO %s, REPLY: %s', message.author.username, reply);
   if (Array.isArray(reply)) {
     reply = reply.join('\n');
