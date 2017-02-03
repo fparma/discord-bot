@@ -25,14 +25,14 @@ test('uploadPbo', t => {
 
   const wanted = 'test.pbo';
   const expected = 'test_v3.pbo';
-  uploadPbo({workDir: __dirname}, pboFile, wanted, (e, res) => {
+  uploadPbo(pboFile, wanted, (e, res) => {
     t.error(e, 'no error')
     t.ok(res.ok, 'was ok');
     t.equals(res.uploadedAs, expected, 'figured out new file name');
   });
 
   SftpMock.prototype.connect = () => Promise.reject(new Error('fail'));
-  uploadPbo({workDir: __dirname}, pboFile, wanted, (e, res) => {
+  uploadPbo(pboFile, wanted, (e, res) => {
     t.ok(e, 'failed to connect');
   });
 });

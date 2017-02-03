@@ -1,5 +1,6 @@
 # app
-credentials.json
+.env
+env
 cache.json
 
 # platform

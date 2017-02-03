@@ -5,12 +5,13 @@
   "main": "index.js",
   "scripts": {
     "test": "tape test/**/*.js | tap-spec",
-    "start": "node index.js"
+    "start": "node -r dotenv/config ."
   },
   "author": "Cuel",
   "license": "ISC",
   "dependencies": {
     "discord.js": "^10.0.1",
+    "dotenv": "^4.0.0",
     "mongodb": "^2.2.16",
     "needle": "^1.4.3",
     "rimraf": "^2.5.4",
