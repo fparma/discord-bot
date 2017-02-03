@@ -30,7 +30,13 @@ test('lintPbo', t => {
   const pboFile = path.join(__dirname, 'test_folder.pbo');
   const pboFolder = path.join(__dirname, 'test_folder');
 
-  const stub = {child_process: {exec: (cmd, cb) => cb(new Error('test'))}};
+  const stub = {
+    child_process: {exec: (cmd, cb) => cb(new Error('test'))},
+    fs: {
+      constants: {R_OK: null},
+      access: (p, c, cb) => cb()
+    }
+  };
   const {lintPboFolder} = proxyquire.noCallThru().load('../lib/pbo-tools', stub);
 
   lintPboFolder(pboFolder, (e, res) => {
@@ -55,7 +61,7 @@ test('lintPbo', t => {
     t.ok(msg.includes('lint fail'), 'err msg included');
   });
 
-  stub.child_process.exec = cmd => t.equals(cmd, 'makepbo -PQ ' + pboFolder, 'exec called with folder');
+  stub.child_process.exec = cmd => t.equals(cmd, 'makepbo -PQ ' + pboFolder + ' bla.pbo', 'exec called with folder');
   lintPboFolder(pboFolder, (e, res) => {
     t.error(e, 'no error');
     t.ok(res.ok, 'was ok');
