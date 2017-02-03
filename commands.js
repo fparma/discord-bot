@@ -1,6 +1,7 @@
 'use strict';
 
-const query = require('./db')
+const query = require('./db');
+const pbo = require('./lib/pbo-handler');
 const commands = new Map();
 
 /**
@@ -19,7 +20,7 @@ exports.register = (bot, db) => {
       console.info('FROM %s, COMMAND: %s', message.author.username, message.content);
       const args = trimmed.slice(trimmed.indexOf(' ')).trim();
       if (args === botName) return sendReply(message, 'Don\'t be silly');
-      commands.get(match).resolve(message, args, db);
+      commands.get(match).resolve(message, args, db, bot);
     }
   });
 };
@@ -29,7 +30,7 @@ exports.register = (bot, db) => {
  * @param message - discord message
  * @param reply - string or stringarray
  */
-function sendReply (message, reply) {
+function sendReply(message, reply) {
   console.info('TO %s, REPLY: %s', message.author.username, reply);
   if (Array.isArray(reply)) {
     reply = reply.join('\n');
@@ -101,7 +102,42 @@ const commandUpcoming = {
   }
 };
 
+const uploadedThrottle = new Map();
+function isThrottled(authorId) {
+  if (!uploadedThrottle.has(authorId)) return false;
+  const lastTime = uploadedThrottle.get(authorId);
+  return (new Date() - lastTime) / 1000 < 30;
+}
+/**
+ * Uploads pbo to the server
+ */
+const commandUploadPbo = {
+  info: `Uploads a pbo to the server. Usage: !upload (url) (optional: wanted pbo name. MUST INCLUDE WORLD). Example: !upload http://www.dl.com/test.pbo tvt30_terry.tanoa`,
+  resolve: (message, args, db, bot) => {
+    const authorId = message.author.id;
+    if (isThrottled(authorId)) {
+      return sendReply(message, 'Please wait 30 seconds between uploading');
+    }
+
+    uploadedThrottle.set(authorId, new Date());
+    const [url, name] = args.split(' ');
+    sendReply(message, 'Hang on...');
+
+    pbo.upload(url, name, (err, reply) => {
+      if (err) {
+        console.error('upload error', err);
+        return sendReply(message, 'An unknown error occurred. Try again later');
+      }
+
+      sendReply(message, reply);
+      bot.channels.find('name', 'bot-log')
+        .sendMessage(`${message.author.username} tried to upload. reply:${reply}) url: ${url || ''} name: ${name || ''}`);
+    })
+  }
+};
+
 commands.set('!ping', commandPing);
 commands.set('!help', commandHelp);
 commands.set('!stats', commandStats);
 commands.set('!upcoming', commandUpcoming);
+commands.set('!upload', commandUploadPbo);

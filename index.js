@@ -5,17 +5,10 @@ const bot = new Discord.Client({autoReconnect: true});
 const db = require('./db');
 const commands = require('./commands');
 const announcements = require('./announcements');
-let credentials;
-try {
-  credentials = require('./credentials.json');
-} catch (_) {
-  console.warn('No credentials.json file! Exiting');
-  process.abort();
-}
 
 Promise.all([
-  db.connect(credentials.dbauth),
-  bot.login(credentials.token)
+  db.connect(process.env.DB_URI),
+  bot.login(process.env.BOT_TOKEN)
 ])
   .then(values => {
     const dbInstance = values[0];
