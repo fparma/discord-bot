@@ -15,7 +15,7 @@ exports.register = (bot, db) => {
     if (botName === message.author.username) return;
 
     const trimmed = message.content.trim();
-    const [match] = /(![^\s]+)/.exec(trimmed) || [];
+    const [match] = /^(![^\s]+)/.exec(trimmed) || [];
     if (commands.has(match)) {
       console.info('FROM %s, COMMAND: %s', message.author.username, message.content);
       const args = trimmed.slice(trimmed.indexOf(' ')).trim();
