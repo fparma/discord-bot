@@ -61,7 +61,7 @@ test('lintPbo', t => {
     t.ok(msg.includes('lint fail'), 'err msg included');
   });
 
-  stub.child_process.exec = cmd => t.equals(cmd, 'makepbo -PQN ' + pboFolder + ' bla.pbo', 'exec called with folder');
+  stub.child_process.exec = cmd => t.equals(cmd, 'makepbo -PQ ' + pboFolder + ' bla.pbo', 'exec called with folder');
   lintPboFolder(pboFolder, (e, res) => {
     t.error(e, 'no error');
     t.ok(res.ok, 'was ok');

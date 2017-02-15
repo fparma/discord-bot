@@ -4,14 +4,16 @@ const proxyquire = require('proxyquire');
 const path = require('path');
 
 test('uploadPbo', t => {
-  t.plan(4);
+  t.plan(7);
   const pboFile = path.join(__dirname, 'test.pbo');
   let files = [
     {type: '-', name: 'test1.pbo'},
     {type: '-', name: 'test_v1.pbo'},
     {type: '-', name: 'tesT.pbo'},
     {type: '-', name: 'tESt_v2.pbo'},
-    {type: '-', name: 'test_v3.txt'}
+    {type: '-', name: 'test_v3.txt'},
+    {type: '-', name: 'test.tanoa.pbo'},
+    {type: '-', name: 'test_v1.tanoa.pbo'}
   ];
 
   function SftpMock() {
@@ -26,9 +28,17 @@ test('uploadPbo', t => {
   const wanted = 'test.pbo';
   const expected = 'test_v3.pbo';
   uploadPbo(pboFile, wanted, (e, res) => {
-    t.error(e, 'no error')
+    t.error(e, 'no error');
     t.ok(res.ok, 'was ok');
     t.equals(res.uploadedAs, expected, 'figured out new file name');
+  });
+
+  const wantedWithWorld = 'test.tanoa.pbo';
+  const expectedWithWorld = 'test_v2.tanoa.pbo';
+  uploadPbo(pboFile, wantedWithWorld, (e, res) => {
+    t.error(e, 'no error');
+    t.ok(res.ok, 'was ok');
+    t.equals(res.uploadedAs, expectedWithWorld, 'figured out new file name');
   });
 
   SftpMock.prototype.connect = () => Promise.reject(new Error('fail'));
