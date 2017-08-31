@@ -1,6 +1,8 @@
 import { DiscordBot } from './../lib/bot';
 import { AbstractCommand } from '../lib/commands/command'
 import * as Discord from 'discord.js';
+import { Database } from '../lib/database';
+import * as mongodb from 'mongodb';
 process.env.NODE_ENV = 'test';
 
 class TestCmd extends AbstractCommand {
@@ -15,12 +17,13 @@ describe(DiscordBot.name, () => {
 
   beforeEach(() => {
     client = new Discord.Client();
-    bot = new DiscordBot(client);
+    bot = new DiscordBot(client, new Database(mongodb.MongoClient));
   })
 
   function mockDiscordMessage() {
     return {
       author: {
+        username: 'tester',
         id: '106088523710345216'
       },
       channel: {
@@ -50,22 +53,23 @@ describe(DiscordBot.name, () => {
     expect(bot.registerCommand(new TestCmd)).toEqual(false);
   })
 
-  it('calls handleMessage for a specific command', async (done) => {
-    client.user = <Discord.ClientUser>{
-      id: '123',
-    }
+  it('calls handleMessage for a specific command and sends a reply', async (done) => {
     const cmd = new TestCmd();
     bot.registerCommand(cmd);
 
+    client.user = <Discord.ClientUser>{
+      id: '123',
+    };
     client.login = () => Promise.resolve('test');
     await bot.connect('test');
 
     const msg = mockDiscordMessage();
-    msg.content = cmd.type + ' test';
-
+    const expectedArg = 'testArg';
+    msg.content = cmd.type + ' ' + expectedArg;
     const expected = 'test reply';
+
     spyOn(cmd, 'handleMessage').and.callFake((arg: string, callback: Function) => {
-      expect(arg).toEqual('test');
+      expect(arg).toEqual(expectedArg);
       callback(expected);
     });
 

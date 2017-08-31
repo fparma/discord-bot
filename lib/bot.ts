@@ -44,8 +44,8 @@ export class DiscordBot {
    */
   private onMessage(message: Discord.Message): void {
     if (this.user.id === message.author.id) return;
-    if (message.author.username !== 'cuel') return; // only listen to cuel;
-
+    if (message.author.id !== '106088065050632192' && process.env.NODE_ENV !== 'test') return; // only listen to cuel;
+    
     const content = message.content.trim();
     const commandType = ((/^(![^\s]+)/.exec(content) || [])[0] || '').toLowerCase();
 

@@ -19,7 +19,7 @@ export class Database {
     return new Promise((resolve, reject) => {
       this.mongo.connect(url, { autoReconnect: true }, (err, db) => {
         if (err) return reject(err);
-        console.log(' max entry: ', db.bufferMaxEntries);
+
         this.db = db;
         this.log.info('Connected');
         resolve(true);

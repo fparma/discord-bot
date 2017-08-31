@@ -17,13 +17,11 @@ export class Logger {
     } else {
       const env = process.env.NODE_ENV || 'development';
       this.level = level !== -1 ? level : env === 'development' ? Level.DEBUG : Level.INFO;
-      console.log(this.level);
-      
     }
   }
 
   private canLog(level: Level) {
-    return this.level >= level && this.level != Level.OFF;
+    return level >= this.level && this.level != Level.OFF;
   }
 
   private details(type: string): string {
