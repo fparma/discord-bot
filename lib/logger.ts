@@ -25,7 +25,7 @@ class Logger {
   }
 
   private details(type: string): string {
-    return `[${new Date().toISOString()}] ${type.toUpperCase()}:${this.name}`;
+    return `[${new Date().toISOString()}] ${type.toUpperCase()} [${this.name}]:`;
   }
 
   debug(...args: any[]): void {

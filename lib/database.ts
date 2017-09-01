@@ -8,7 +8,6 @@ interface User {
   steam_id: string
 }
 
-
 export class Database {
   private log = LoggerFactory.create(Database);
   db: mongodb.Db;
@@ -18,7 +17,10 @@ export class Database {
   connect(url: string) {
     return new Promise((resolve, reject) => {
       this.mongo.connect(url, { autoReconnect: true }, (err, db) => {
-        if (err) return reject(err);
+        if (err) {
+          this.log.fatal('Failed to connect to database', err);
+          return reject(err);
+        }
 
         this.db = db;
         this.log.info('Connected');

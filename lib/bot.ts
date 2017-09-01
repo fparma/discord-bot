@@ -16,13 +16,14 @@ export class DiscordBot {
    * @param token
    */
   async connect(token: string) {
-    if (token == null) {
-      this.log.fatal('Invalid token');
-      process.exit(1);
-    }
+    if (token == null) throw new Error('Invalid token');
 
     this.client.once('ready', () => {
       this.log.info(`Connected to discord as "${this.user.username}"`);
+    });
+
+    this.client.on('disconnect', err => {
+      this.log.fatal('Websocket disconnected', err);
     });
 
     try {
@@ -31,7 +32,7 @@ export class DiscordBot {
       this.client.on('message', msg => this.onMessage(msg));
     } catch (e) {
       this.log.fatal('Failed to connect to discord', e);
-      process.exit(1);
+      throw e;
     }
   }
 

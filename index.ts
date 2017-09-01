@@ -6,19 +6,33 @@ import { PingCommand } from './lib/commands/ping';
 import * as mongodb from 'mongodb';
 import { LoggerFactory } from './lib/logger';
 
-const log = LoggerFactory.create('bootstrap');
-log.info('Using environment', process.env.NODE_ENV);
+abstract class Bootstrap {
+  private static log = LoggerFactory.create(Bootstrap);
 
-(async function () {
-  const db = new Database(new mongodb.MongoClient());
-  const bot = new DiscordBot(new Discord.Client());
-  bot.registerCommand(new PingCommand());
-  bot.registerCommand(new StatsCommand(db));
+  static async init() {
+    this.log.info('Using environment', process.env.NODE_ENV);
 
-  await Promise.all([
-    db.connect(String(process.env.DB_URL)),
-    bot.connect(String(process.env.BOT_TOKEN))
-  ]);
+    const db = new Database(new mongodb.MongoClient());
+    const bot = new DiscordBot(new Discord.Client());
+    this.registerCommands(bot, db);
 
-  log.info('Started');
-})();
+    try {
+      await Promise.all([
+        db.connect(String(process.env.DB_URL)),
+        bot.connect(String(process.env.BOT_TOKEN))
+      ]);
+    } catch (err) {
+      this.log.fatal('An error occured during launch');
+      process.exit(1);
+    }
+
+    this.log.info('Started');
+  }
+
+  private static registerCommands(bot: DiscordBot, db: Database) {
+    bot.registerCommand(new PingCommand());
+    bot.registerCommand(new StatsCommand(db));
+  }
+}
+
+Bootstrap.init();
