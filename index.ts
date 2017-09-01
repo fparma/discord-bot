@@ -18,8 +18,8 @@ abstract class Bootstrap {
 
     try {
       await Promise.all([
-        db.connect(String(process.env.DB_URL)),
-        bot.connect(String(process.env.BOT_TOKEN))
+        db.connect(process.env.DB_URL),
+        bot.connect(process.env.BOT_TOKEN)
       ]);
     } catch (err) {
       this.log.fatal('An error occured during launch', err);

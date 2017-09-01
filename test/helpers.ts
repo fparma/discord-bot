@@ -1,9 +1,12 @@
 import { LoggerFactory } from '../lib/logger';
 
 const noop = () => {}
-const fakeLog = LoggerFactory.create('fakeLog');
-for (const i in fakeLog) {
-  (fakeLog as any)[i] = noop;
+const fakeLog = {
+  debug: noop,
+  info: noop,
+  warn: noop,
+  error: noop,
+  fatal: noop
 }
 
 export abstract class Helpers {

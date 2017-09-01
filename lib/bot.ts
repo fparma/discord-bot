@@ -15,7 +15,7 @@ export class DiscordBot {
    * Connect the bot using provided token
    * @param token
    */
-  async connect(token: string) {
+  async connect(token: string = '') {
     if (token == null) throw new Error('Invalid token');
 
     this.client.once('ready', () => {

@@ -14,7 +14,9 @@ export class Database {
   constructor(private readonly mongo: mongodb.MongoClient) {
   }
 
-  connect(url: string) {
+  connect(url: string): Promise<boolean> {
+    if (!url) return Promise.reject(new Error('Invalid url'));
+
     return new Promise((resolve, reject) => {
       this.mongo.connect(url, { autoReconnect: true }, (err, db) => {
         if (err) {
