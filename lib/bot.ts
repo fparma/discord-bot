@@ -31,7 +31,7 @@ export class DiscordBot {
       await this.client.login(token);
       this.client.on('message', msg => this.onMessage(msg));
     } catch (e) {
-      this.log.fatal('Failed to connect to discord', e);
+      this.log.fatal('Failed to connect to discord');
       throw e;
     }
   }

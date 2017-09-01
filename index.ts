@@ -22,7 +22,7 @@ abstract class Bootstrap {
         bot.connect(String(process.env.BOT_TOKEN))
       ]);
     } catch (err) {
-      this.log.fatal('An error occured during launch');
+      this.log.fatal('An error occured during launch', err);
       process.exit(1);
     }
 

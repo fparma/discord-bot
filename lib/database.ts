@@ -18,7 +18,7 @@ export class Database {
     return new Promise((resolve, reject) => {
       this.mongo.connect(url, { autoReconnect: true }, (err, db) => {
         if (err) {
-          this.log.fatal('Failed to connect to database', err);
+          this.log.fatal('Failed to connect to database');
           return reject(err);
         }
 
