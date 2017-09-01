@@ -1,17 +1,14 @@
 import { Database } from './database';
 import * as Discord from 'discord.js';
-import { Logger } from './logger';
-import { AbstractCommand } from './commands/command';
+import { LoggerFactory } from './logger';
+import { Command } from './commands/command';
 
 export class DiscordBot {
-  private log = new Logger(DiscordBot);
-  private commands = new Map<string, AbstractCommand>();
+  private log = LoggerFactory.create(DiscordBot);
+  private commands = new Map<string, Command>();
   private static HELP_COMMAND = '!help';
 
-  constructor(
-    public readonly client: Discord.Client,
-    private readonly db: Database
-  ) {
+  constructor(public readonly client: Discord.Client) {
   }
 
   /**
@@ -44,7 +41,8 @@ export class DiscordBot {
    */
   private onMessage(message: Discord.Message): void {
     if (this.user.id === message.author.id) return;
-    if (message.author.id !== '106088065050632192' && process.env.NODE_ENV !== 'test') return; // only listen to cuel;
+    // TODO: remove when ready
+    if (message.author.id !== '106088065050632192') return;
     
     const content = message.content.trim();
     const commandType = ((/^(![^\s]+)/.exec(content) || [])[0] || '').toLowerCase();
@@ -71,14 +69,14 @@ export class DiscordBot {
     const {author} = message;
     this.log.info(`Running command from ${this.formatAuthor(author)}: ${message.content}`);
     const handleReply = (reply: string | string[]) => this.replyToMessage(reply, message);
-    command!.handleMessage(args, handleReply, message, this.db);
+    command!.handleMessage(args, handleReply, message);
   }
 
   /**
    * Registers a command
    * @param command
    */
-  registerCommand(command: AbstractCommand): boolean {
+  registerCommand(command: Command): boolean {
     const { type } = command;
 
     if (!type.startsWith('!')) {
@@ -112,7 +110,7 @@ export class DiscordBot {
       return;
     }
 
-    this.log.debug(`Sending reply to ${this.formatAuthor(author)}. Reply: ${reply}`);
+    this.log.debug(`Reply to ${this.formatAuthor(author)}. Reply: ${reply}`);
     message.channel.send(reply);
   }
 

@@ -1,9 +1,9 @@
-import { Logger } from './logger';
+import { LoggerFactory } from './logger';
 import { writeFile } from 'fs';
 import { resolve } from 'path';
 
 export abstract class EventsCache {
-  private static log = new Logger(EventsCache);
+  private static log = LoggerFactory.create(EventsCache);
 
   read(): Promise<{ [key: string]: null }> {
     return new Promise((resolve) => {

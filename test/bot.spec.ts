@@ -1,13 +1,14 @@
 import { DiscordBot } from './../lib/bot';
-import { AbstractCommand } from '../lib/commands/command'
 import * as Discord from 'discord.js';
 import { Database } from '../lib/database';
 import * as mongodb from 'mongodb';
-process.env.NODE_ENV = 'test';
+import { Command } from '../lib/commands/command';
+import { Helpers } from './helpers';
 
-class TestCmd extends AbstractCommand {
+class TestCmd implements Command {
   type = '!test';
   usageInfo = 'usage test';
+  rateLimit = 0;
   handleMessage() { }
 }
 
@@ -16,15 +17,16 @@ describe(DiscordBot.name, () => {
   let bot: DiscordBot;
 
   beforeEach(() => {
+    Helpers.disableLogging();
     client = new Discord.Client();
-    bot = new DiscordBot(client, new Database(mongodb.MongoClient));
+    bot = new DiscordBot(client);
   })
 
   function mockDiscordMessage() {
     return {
       author: {
         username: 'tester',
-        id: '106088523710345216'
+        id: '106088065050632192'
       },
       channel: {
         send: () => { },

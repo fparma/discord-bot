@@ -1,15 +1,14 @@
 import { Database } from './../database';
 import { Message } from 'discord.js';
 
-export abstract class AbstractCommand {
-  public abstract type: string;
-  public abstract usageInfo: string;
-  public readonly rateLimit: number = 0;
+export interface Command {
+  readonly type: string;
+  readonly usageInfo: string;
+  readonly rateLimit: number;
 
-  public abstract handleMessage(
+  handleMessage(
     arg: string,
     sendReply: (message: string | string[]) => void,
-    message: Message,
-    db: Database,
+    message: Message
   ): void;
 }

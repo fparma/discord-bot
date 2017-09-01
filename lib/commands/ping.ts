@@ -1,13 +1,14 @@
 import { Message } from 'discord.js';
 import { Database } from './../database';
-import { AbstractCommand } from './command';
+import { Command } from './command';
 
-export class PingCommand extends AbstractCommand {
+export class PingCommand implements Command {
   readonly type = '!ping';
   readonly usageInfo = 'replying with the pong';
-  private static reply = 'pong!';
+  readonly rateLimit = 0;
+  private static readonly reply = 'pong!';
 
-  handleMessage(arg: string, sendReply: (message: string | string[]) => void, message: Message, db: Database) {
+  handleMessage(arg: string, sendReply: (message: string | string[]) => void, message: Message) {
     sendReply(PingCommand.reply);
   }
 }

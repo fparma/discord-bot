@@ -5,19 +5,19 @@ enum Level {
 /**
  * Super simple logger, use unix pipe and logrotate to save to file
  */
-export class Logger {
+class Logger {
   level: Level;
   private name: string;
 
-  constructor(fn: Function, level: Level = -1) {
-    this.name = fn.name;
-
-    if (process.env.NODE_ENV === 'test') {
-      this.level = Level.OFF;
+  constructor(fnOrString: Function | string, level: Level = -1) {
+    if (typeof fnOrString === 'string') {
+      this.name = fnOrString;
     } else {
-      const env = process.env.NODE_ENV || 'development';
-      this.level = level !== -1 ? level : env === 'development' ? Level.DEBUG : Level.INFO;
+      this.name = fnOrString.name;
     }
+
+    const env = process.env.NODE_ENV || 'development';
+    this.level = level !== -1 ? level : env === 'development' ? Level.DEBUG : Level.INFO;
   }
 
   private canLog(level: Level) {
@@ -55,5 +55,11 @@ export class Logger {
   fatal(...args: any[]): void {
     args.unshift(this.details('fatal'));
     console.error.apply(console, args);
+  }
+}
+
+export class LoggerFactory {
+  static create(fnOrString: Function | string, level: Level = -1): Logger {
+    return new Logger(fnOrString, level);
   }
 }

@@ -1,5 +1,5 @@
 import * as mongodb from 'mongodb';
-import { Logger } from "./logger";
+import { LoggerFactory } from "./logger";
 import * as Messages from './messages';
 
 interface User {
@@ -10,7 +10,7 @@ interface User {
 
 
 export class Database {
-  private log = new Logger(Database);
+  private log = LoggerFactory.create(Database);
   db: mongodb.Db;
   constructor(private readonly mongo: mongodb.MongoClient) {
   }

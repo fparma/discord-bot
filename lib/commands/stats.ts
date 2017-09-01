@@ -1,17 +1,23 @@
-import { Logger } from './../logger';
+import { LoggerFactory } from './../logger';
 import { Database } from './../database';
 import { Message } from 'discord.js';
-import { AbstractCommand } from './command';
 import * as Messages from '../messages';
+import { Command } from './command';
 
-export class StatsCommand extends AbstractCommand {
+export class StatsCommand implements Command {
   readonly type = '!stats';
   readonly usageInfo = 'Get event stats for user. Usage: !stats (website username OR steamID64)';
-  private static log = new Logger(StatsCommand);
+  readonly rateLimit = 4;
+  private static log = LoggerFactory.create(StatsCommand);
 
-  async handleMessage(arg: string, sendReply: (message: string | string[]) => void, message: Message, db: Database, ) {
+  constructor(private db: Database) {
+  }
+
+  async handleMessage(arg: string, sendReply: (message: string | string[]) => void, message: Message) {
+    if (!arg) return sendReply(Messages.REPLY_PROVIDE_ARGUMENT);
+
     message.channel.startTyping();
-    const reply = await StatsCommand.getUserStatsOrErrorMessage(db, arg);
+    const reply = await StatsCommand.getUserStatsOrErrorMessage(this.db, arg);
 
     message.channel.stopTyping();
     sendReply(reply);
@@ -30,7 +36,7 @@ export class StatsCommand extends AbstractCommand {
       this.log.debug('Found user', user.name, user.steam_id);
       const count = await db.countUserAttendance(user.steam_id);
 
-      return Messages.USER_STATS_REPLY(user.name, user.created_at, count);
+      return Messages.REPLY_USER_STATS(user.name, user.created_at, count);
     } catch (err) {
       this.log.error('Error searching user or attendance:', err);
       return Messages.DB_ERROR;
