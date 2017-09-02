@@ -9,15 +9,10 @@ class Logger {
   level: Level;
   private name: string;
 
-  constructor(fnOrString: Function | string, level: Level = -1) {
-    if (typeof fnOrString === 'string') {
-      this.name = fnOrString;
-    } else {
-      this.name = fnOrString.name;
-    }
-
+  constructor(fn: Function, level: Level = -1) {
+    this.name = fn.name;
     const env = process.env.NODE_ENV || 'development';
-    this.level = level !== -1 ? level : env === 'development' ? Level.DEBUG : Level.INFO;
+    this.level = level !== -1 ? level : env === 'production' ? Level.INFO : Level.DEBUG;
   }
 
   private canLog(level: Level) {
@@ -59,7 +54,7 @@ class Logger {
 }
 
 export class LoggerFactory {
-  static create(fnOrString: Function | string, level: Level = -1): Logger {
-    return new Logger(fnOrString, level);
+  static create(fn: Function, level: Level = -1): Logger {
+    return new Logger(fn, level);
   }
 }

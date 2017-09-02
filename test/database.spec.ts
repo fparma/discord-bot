@@ -29,17 +29,17 @@ describe(DiscordBot.name, () => {
 
   it('rejects with an error if connecting failed', async ()=> {
     const url = 'test://';
-    const err = new Error('test');
+    const expectedError = new Error('test');
     spyOn(mongo, 'connect').and.callFake((providedUrl: string, opts: object, callback: Function) => {
       expect(url).toEqual(providedUrl);
-      callback(err);
+      callback(expectedError);
     });
 
     try {
       await db.connect(url)
       fail('should not be reached');
     } catch (e) {
-      expect(err).toEqual(e);
+      expect(expectedError).toEqual(e);
     }
   });
 });

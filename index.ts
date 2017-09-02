@@ -10,7 +10,7 @@ abstract class Bootstrap {
   private static log = LoggerFactory.create(Bootstrap);
 
   static async init() {
-    this.log.info('Using environment', process.env.NODE_ENV);
+    this.log.info('Using environment', process.env.NODE_ENV || 'development');
 
     const db = new Database(new mongodb.MongoClient());
     const bot = new DiscordBot(new Discord.Client());

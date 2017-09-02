@@ -16,10 +16,11 @@ export class DiscordBot {
    * @param token
    */
   async connect(token: string = '') {
-    if (token == null) throw new Error('Invalid token');
+    if (!token) throw new Error('Invalid token');
 
     this.client.once('ready', () => {
       this.log.info(`Connected to discord as "${this.user.username}"`);
+      this.client.on('message', msg => this.onMessage(msg));
     });
 
     this.client.on('disconnect', err => {
@@ -29,7 +30,6 @@ export class DiscordBot {
     try {
       this.log.debug('Logging in to discord');
       await this.client.login(token);
-      this.client.on('message', msg => this.onMessage(msg));
     } catch (e) {
       this.log.fatal('Failed to connect to discord');
       throw e;
@@ -106,7 +106,7 @@ export class DiscordBot {
     }
 
     const { author } = message;
-    if (reply == null) {
+    if (!reply) {
       this.log.warn(`A command tried to send an empty reply to ${this.formatAuthor(author)}), stopping. Message: ${message.content}`);
       return;
     }
@@ -121,7 +121,7 @@ export class DiscordBot {
    */
   private printHelp(message: Discord.Message): void {
     const replies = ['!help - this command'];
-    this.commands.forEach((value, key) => replies.push(`${key} - ${value.usageInfo}`));
+    this.commands.forEach((cmd, key) => replies.push(`${key} - ${cmd.usageInfo}`));
     replies.sort((a, b) => a.localeCompare(b));
     this.replyToMessage(replies, message);
   }
