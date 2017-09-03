@@ -1,11 +1,19 @@
 import * as mongodb from 'mongodb';
 import { LoggerFactory } from "./logger";
 import * as Messages from './messages';
+import { EventEmitter } from 'events';
 
-interface User {
+export interface User {
   name: string
   created_at: Date
   steam_id: string
+}
+
+export interface Event {
+  id: string;
+  name: string;
+  permalink: string;
+  authors: string;
 }
 
 export class Database {
@@ -32,22 +40,35 @@ export class Database {
   }
 
   findOneUser(userNameOrSteamId: string): Promise<User> {
-    return new Promise((resolve, reject) => {
       const userQuery = { $or: [{ name: userNameOrSteamId }, { steam_id: userNameOrSteamId }] };
-      this.db.collection('users').findOne(userQuery, ((err, res: User) => {
-        if (err) return reject(err);
-        resolve(res);
-      }));
-    });
+      return this.db.collection('users').findOne(userQuery);
   }
 
   countUserAttendance(userSteamid: string): Promise<number> {
-    return new Promise((resolve, reject) => {
       const groupQuery = { 'units.user_id': { $in: [userSteamid] } };
-      this.db.collection('groups').count(groupQuery, ((err, amount) => {
-        if (err) return reject(err);
-        return resolve(amount);
-      }));
-    });
+      return this.db.collection('groups').count(groupQuery);
+  }
+
+  async findFutureEvents(): Promise<Event[]> {
+    const collection = this.db.collection('events');
+    const query = { date: { $gte: new Date() } };
+    const options = { sort: { date: 1 } };
+
+    try {
+      const res = await collection.find(query, options).toArray();
+      const events = res.map(evt => {
+        return {
+          id: evt._id,
+          name: evt.name,
+          permalink: evt.permalink,
+          authors: evt.authors
+        }
+      });
+      return events;
+    }
+    catch (err) {
+      this.log.error('Error finding events', err);
+      return [];
+    }
   }
 }

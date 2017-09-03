@@ -6,3 +6,8 @@ export const REPLY_USER_STATS = (name: string, date: Date, count: number): strin
   const event = count === 1 ? 'event' : 'events';
   return `${name} joined on ${date.toISOString().substr(0, 10)} and has registered for ${count} ${event}`;
 }
+
+export const NEW_EVENT = (name: string, authors: string, permalink: string) => {
+  const url = 'https://fparma.herokuapp.com/events/event/' + permalink;
+  return `:joystick: New event! ${name} by ${authors}. ${url} :rocket:`;
+}

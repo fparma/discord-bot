@@ -9,7 +9,7 @@ describe(DiscordBot.name, () => {
   let db: Database;
   let mongo: mongodb.MongoClient;
 
-  beforeEach(() =>{
+  beforeEach(() => {
     Helpers.disableLogging();
     mongo = new mongodb.MongoClient();
     db = new Database(mongo);
@@ -27,7 +27,7 @@ describe(DiscordBot.name, () => {
     done();
   });
 
-  it('rejects with an error if connecting failed', async ()=> {
+  it('rejects with an error if connecting failed', async () => {
     const url = 'test://';
     const expectedError = new Error('test');
     spyOn(mongo, 'connect').and.callFake((providedUrl: string, opts: object, callback: Function) => {

@@ -80,8 +80,7 @@ describe(DiscordBot.name, () => {
       done();
     });
 
-    process.nextTick(() => {
-      client.emit('message', msg);
-    })
+    client.emit('ready');
+    process.nextTick(() => client.emit('message', msg));
   });
 });
