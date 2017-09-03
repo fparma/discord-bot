@@ -2,6 +2,7 @@ import { Database } from './database';
 import * as Discord from 'discord.js';
 import { LoggerFactory } from './logger';
 import { Command } from './commands/command';
+import { EventsAnnouncer } from './events-announcer';
 
 export class DiscordBot {
   private log = LoggerFactory.create(DiscordBot);

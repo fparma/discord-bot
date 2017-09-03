@@ -1,20 +1,24 @@
 import * as Discord from 'discord.js';
 import { Event, Database } from './database';
 import { Cache, EventsCache } from './cache'
+import * as Messages from './messages';
+import { Message } from 'discord.js';
+import { LoggerFactory } from './logger';
 
 export class EventsAnnouncer {
   private cache: Cache;
   private interval: NodeJS.Timer;
+  private log = LoggerFactory.create(EventsAnnouncer);
   private static POLL_DELAY = 30 * 1000;
 
   constructor(
     private db: Database,
-    private channel: Discord.Channel
+    private channel: Discord.PartialTextBasedChannelFields
   ) {
     this.cache = EventsCache.read();
   }
 
-  monitor(): boolean {
+  pollNewEvents(): boolean {
     if (this.interval != null) return false;
 
     this.poll();
@@ -37,6 +41,8 @@ export class EventsAnnouncer {
   }
 
   private publishEventMessage(events: Event[]) {
-
+    this.log.info(`Publishing ${events.length} new event(s)`);
+    const formatted = events.map(evt => Messages.NEW_EVENT(evt.name, evt.authors, evt.permalink)).join('\n');
+    this.channel.send(formatted);
   }
 }
