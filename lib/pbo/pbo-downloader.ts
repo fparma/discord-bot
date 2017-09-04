@@ -4,45 +4,53 @@ import { IncomingMessage } from 'http';
 import { LoggerFactory } from '../logger';
 
 export enum DownloadState {
-  BAD_HEADERS, BAD_HOST, BAD_STATUS_CODE, UNKNOWN_CONTENT_LENGTH, FILE_TOO_LARGE, OK
+  BAD_HEADERS, BAD_HOST, BAD_STATUS_CODE, FILE_TOO_LARGE, OK
 }
 
 export class PboDownloader {
-  private log = LoggerFactory.create(PboDownloader);
+  private static log = LoggerFactory.create(PboDownloader);
   private static MAX_FILESIZE = 10485760; // 10mb
   constructor(private url: string) {
   }
 
-  checkUrl(): boolean {
-    return new RegExp('^https?://').test(this.url) && this.url.endsWith('.pbo');
+  static checkUrl(url: string): boolean {
+    return new RegExp('^https?://').test(url) && url.endsWith('.pbo');
   }
 
-  async verifyHeaders(): Promise<DownloadState> {
+  static async verifyHeaders(url: string): Promise<DownloadState> {
+    this.log.debug('Getting headers for url:', url);
     try {
-      const headers = await PboDownloader.getHeaders(this.url);
+      const headers = await PboDownloader.getHeaders(url);
       return PboDownloader.verifyHeaderResponse(headers as IncomingMessage);
     } catch (err) {
-      if (err) this.log.error('Error getting headers for pbo', err);
+      if (err) this.log.error('Error getting headers for url: ', url, err);
       return DownloadState.BAD_HOST;
     }
   }
 
-  async download(filePath: string) {
-    let totalSize = 0;
-    const stream = needle.get(this.url);
-
+  static download(url: string, filePath: string): Promise<DownloadState> {
+    this.log.info('Downloading file... ', url);
     return new Promise((resolve, reject) => {
+      const stream = needle.get(url);
+      let totalSize = 0;
+
       stream.on('readable', () => {
-        totalSize += PboDownloader.calculateStreamSize.apply(stream);
+        totalSize += PboDownloader.calculateStreamSize(stream);
         if (totalSize > PboDownloader.MAX_FILESIZE) {
+          this.log.info(`Aborting download for ${url}, file too large`);
           (stream as any).request.abort();
-          return reject(DownloadState.FILE_TOO_LARGE);
+          reject(DownloadState.FILE_TOO_LARGE);
         }
       });
 
       stream.on('end', err => {
-        if (err) return reject(DownloadState.BAD_HOST);
-        return resolve(DownloadState.OK);
+        if (err) {
+          this.log.warn('Download interrupted', url, err);
+          return reject(DownloadState.BAD_HOST);
+        }
+
+        this.log.info(`Download finished for url: ${url}`);
+        resolve(DownloadState.OK);
       });
       stream.pipe(createWriteStream(filePath));
     });
@@ -72,7 +80,7 @@ export class PboDownloader {
 
   private static async getHeaders(url: string) {
     return new Promise((resolve, reject) => {
-      return needle.head(url, (err, response) => {
+      needle.head(url, (err, response) => {
         if (err) return reject(err)
         resolve(response);
       });
