@@ -12,6 +12,8 @@
     "discord.js": "^11.1.0",
     "dotenv": "^4.0.0",
     "mongodb": "^2.2.31",
+    "needle": "^2.0.0",
+    "ssh2-sftp-client": "^1.1.0",
     "ts-node": "^3.3.0",
     "typescript": "^2.4.2"
   },
@@ -19,6 +21,8 @@
     "jasmine": "^2.8.0",
     "@types/mongodb": "^2.2.11",
     "@types/node": "^8.0.26",
+    "@types/needle": "^1.4.0",
+    "@types/ssh2-sftp-client": "^1.0.6",
     "@types/jasmine": "^2.5.54",
     "jasmine-ts": "^0.2.1"
   }
