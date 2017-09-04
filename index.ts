@@ -35,8 +35,8 @@ abstract class Bootstrap {
 
   private static setupAnnouncer(db: Database, bot: DiscordBot) {
     // TODO: correct channel
-    // const announcer = new EventsAnnouncer(db, bot.client.channels.find('name', 'announcements'));
-    const announcer = new EventsAnnouncer(db, bot.client.users.find('id', '106088065050632192'));
+    const channel = bot.client.users.find('id', '106088065050632192'); //bot.client.channels.find('id', '258530805138194442');
+    const announcer = new EventsAnnouncer(db, channel);
     announcer.pollNewEvents();
   }
 
