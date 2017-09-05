@@ -1,32 +1,37 @@
 import * as SftpClient from 'ssh2-sftp-client';
 import * as path from 'path';
+import { LoggerFactory } from '../logger';
 
 export abstract class PboUploader {
-  static uploadPbo(pboFilePath: string, wantedUploadName: string, callback: Function) {
-    let uploadedAs: string;
+  private static log = LoggerFactory.create(PboUploader);
+
+  static async uploadPbo(pboFilePath: string, wantedUploadName: string, callback: Function) {
+    let finalUploadName: string;
     const cwd = String(process.env.FTP_CWD);
     const sftp = new SftpClient();
-    sftp.connect({
-      host: process.env.FTP_HOST,
-      port: Number(process.env.FTP_PORT),
-      username: process.env.FTP_USER,
-      password: process.env.FTP_PASSWORD
-    })
-      .then(() => sftp.list(cwd))
-      .then(allFiles => {
-        const pboFiles = this.getPboNames(allFiles);
-        uploadedAs = this.getValidFilename(wantedUploadName, pboFiles);
-        if (!uploadedAs.endsWith('.pbo')) uploadedAs += '.pbo';
-        return sftp.put(pboFilePath, `${cwd}/${uploadedAs}`);
+
+    try {
+      await sftp.connect({
+        host: process.env.FTP_HOST,
+        port: Number(process.env.FTP_PORT),
+        username: process.env.FTP_USER,
+        password: process.env.FTP_PASSWORD
       })
-      .then(() => {
-        sftp.end();
-        callback(null, { ok: true, uploadedAs });
-      })
-      .catch(err => {
-        sftp.end();
-        callback(err);
-      });
+
+      const list = await sftp.list(cwd);
+      const files = this.getPboNames(list);
+      finalUploadName = this.getValidFilename(wantedUploadName, files);
+      if (!finalUploadName.endsWith('.pbo')) finalUploadName += '.pbo';
+
+      await sftp.put(pboFilePath, `${cwd}/${finalUploadName}`);
+      await sftp.end();
+      return finalUploadName;
+    } catch (err) {
+      sftp.end();
+      this.log.error('Error during upload of ', pboFilePath, err);
+      return null;
+    }
+
   }
 
   private static getPboNames(files: SftpClient.FileInfo[]) {
@@ -54,5 +59,4 @@ export abstract class PboUploader {
     if (dotIndex == -1) return filename + version;
     else return filename.substring(0, dotIndex) + version + filename.substring(dotIndex);
   }
-
 }
