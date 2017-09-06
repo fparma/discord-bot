@@ -1,4 +1,5 @@
 import * as proxyquire from 'proxyquire';
+import * as path from 'path';
 import { resolve } from 'path';
 import { PboTools } from '../../lib/pbo/pbo-tools';
 import { Helpers } from '../helpers';
@@ -34,7 +35,6 @@ describe('PboTools', () => {
     done();
   });
 
-
   it('rejects an error from extractpbo', async (done) => {
     const expectedErr = new Error('test error');
     mock.child_process = {
@@ -57,16 +57,18 @@ describe('PboTools', () => {
   it('calls extractpbo with correct parameters', async (done) => {
     mock.fs = {
       access: (folderPath: string, constant: any, callback: Function) => {
+        expect(folderPath).toEqual(path.join(pboFolderPath, 'mission.sqm'))
         callback();
       }
     }
 
     mock.child_process = {
-      exec: (command: string, callback: Function) => {
+      exec: (command: string) => {
         expect(command).toEqual(`makepbo -WP ${pboFolderPath} bla.pbo`);
-        done()
+        done();
       }
     };
+
     await getPboTools().lintPboFolder(pboFolderPath);
   });
 });

@@ -1,3 +1,5 @@
+import * as fs from 'fs';
+import * as path from 'path';
 import { StatsCommand } from './lib/commands/stats';
 import { Database } from './lib/database';
 import * as Discord from 'discord.js';
@@ -7,6 +9,7 @@ import * as mongodb from 'mongodb';
 import { LoggerFactory } from './lib/logger';
 import { EventsAnnouncer } from './lib/events-announcer';
 import { Message } from 'discord.js';
+import { UploadCommand } from './lib/commands/upload'
 
 abstract class Bootstrap {
   private static log = LoggerFactory.create(Bootstrap);
@@ -43,6 +46,16 @@ abstract class Bootstrap {
   private static registerCommands(bot: DiscordBot, db: Database) {
     bot.registerCommand(new PingCommand());
     bot.registerCommand(new StatsCommand(db));
+
+    const tempFolder = path.join(__dirname, 'temp');
+    fs.mkdir(tempFolder, (err) => {
+      if (err && err.code !== 'EEXIST') {
+        this.log.fatal('Failed to create temp folder');
+        throw err;
+      };
+
+      bot.registerCommand(new UploadCommand(tempFolder));
+    });
   }
 }
 

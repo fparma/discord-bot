@@ -25,7 +25,7 @@ export abstract class PboDownloader {
   }
 
   static download(url: string, filePath: string): Promise<PBO_STATES> {
-    this.log.info('Downloading file... ', url);
+    this.log.info('Downloading file', url);
     return new Promise((resolve, reject) => {
       const stream = needle.get(url);
       let totalSize = 0;
@@ -71,7 +71,12 @@ export abstract class PboDownloader {
     if (!length) return PBO_STATES.DOWNLOAD_BAD_HOST;
     if (length > PboDownloader.MAX_FILESIZE) return PBO_STATES.DOWNLOAD_FILE_TOO_LARGE;
 
-    return PBO_STATES.DOWNLOAD_OK;
+    const type = headers ? headers['content-type'] : null;
+    // we could check for application/octet-stream here but there's no garantuee that'll be sent back
+    // checking for text/html should be enough to cover custom 404 sites, that returns 200 status code
+    if (!type || type == 'text/html') return PBO_STATES.DOWNLOAD_BAD_HOST;
+
+    return PBO_STATES.DOWNLOAD_HEADERS_OK;
   }
 
   private static async getHeaders(url: string) {

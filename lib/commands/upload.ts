@@ -21,10 +21,10 @@ export class UploadCommand implements Command {
 
   async handleMessage(arg: string, sendReply: (message: string | string[]) => void, message: Message) {
     const [url, wantedName] = arg.split(' ').map((v = '') => v.trim());
-    const cleanedName = UploadCommand.makePboName(url, wantedName);
-    this.log.info(`Attempt upload url:${url}, wanted name: ${wantedName}, cleaned: ${cleanedName}`);
+    const sanitizedName = UploadCommand.sanitizePboName(url, wantedName);
+    this.log.info(`url:${url}, wanted name: ${wantedName}, sanitized: ${sanitizedName}`);
 
-    const validateMessage = UploadCommand.validate(url, cleanedName);
+    const validateMessage = UploadCommand.validate(url, sanitizedName);
     if (validateMessage != null) {
       this.log.info('Upload validation failed', url, 'reason:', validateMessage);
       sendReply(validateMessage);
@@ -32,30 +32,32 @@ export class UploadCommand implements Command {
     }
 
     const goodEnoughRandom = `${Date.now()}.${Math.random()}`.replace(/\./g, '_');
-    const pboFolder = join(this.tempFolder, `${cleanedName}_${goodEnoughRandom}`);
+    const pboFolder = join(this.tempFolder, `${sanitizedName}_${goodEnoughRandom}`);
     const pboPath = `${pboFolder}.pbo`;
 
     message.channel.startTyping();
     const done = (reply: string) => {
       message.channel.stopTyping();
-      unlink(pboPath, err => err && this.log.warn('Error unlinking pbo', pboPath, err));
+      unlink(pboPath, err => err && err.code != 'ENOENT' && this.log.warn('Error unlinking pbo', pboPath, err));
       rimraf(pboFolder, { glob: false }, err => err && this.log.warn('Error removing pbo folder', pboFolder, err));
       sendReply(reply);
     }
 
-    const downloadState = await this.download(url, pboPath);
+    const downloadState = await UploadCommand.download(url, pboPath);
+    this.log.debug('Download state after downloading:', downloadState);
     if (downloadState !== PBO_STATES.DOWNLOAD_OK) {
-      return done(Messages.stateToReply(downloadState));
+      return done(Messages.pboStateToReply(downloadState));
     }
   }
 
-  async download(url: string, pboPath: string) {
+  static async download(url: string, pboPath: string) {
     const status = await PboDownloader.verifyHeaders(url);
-    if (status !== PBO_STATES.DOWNLOAD_OK) return status;
-    return PboDownloader.download(url, pboPath);
+    console.log('headers', status);
+    if (status !== PBO_STATES.DOWNLOAD_HEADERS_OK) return status;
+    return PboDownloader.download(url, pboPath)
   }
 
-  private static makePboName(url: string, wantedName: string) {
+  private static sanitizePboName(url: string, wantedName: string) {
     let name;
     if (wantedName) {
       name = wantedName.slice(0, this.indexOfPbo(wantedName));
@@ -72,6 +74,10 @@ export class UploadCommand implements Command {
   }
 
   private static validate(url: string, name: string) {
+    if (!PboDownloader.checkUrl(url)) {
+      return Messages.UPLOAD_VALIDATION_INVALID_URL;
+    }
+
     if (name.length < 5) {
       return Messages.UPLOAD_VALIDATION_LONGER_NAME;
     }
@@ -79,11 +85,6 @@ export class UploadCommand implements Command {
     if (!/^[a-zA-Z0-9_-]+\.[a-zA-Z0-9-_]+$/.test(name)) {
       return Messages.UPLOAD_VALIDATION_PROVIDE_WORLD;
     }
-
-    if (!PboDownloader.checkUrl(url)) {
-      return Messages.UPLOAD_VALIDATION_INVALID_URL;
-    }
-
     return null;
   }
 }

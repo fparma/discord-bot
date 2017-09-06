@@ -18,6 +18,14 @@ export const UPLOAD_VALIDATION_LONGER_NAME = 'Please provide a longer name (min 
 export const UPLOAD_VALIDATION_PROVIDE_WORLD = 'Invalid wanted filename. Did you include world? (example.tanoa)';
 export const UPLOAD_VALIDATION_INVALID_URL = 'Bad URL. Must be a direct link to a .pbo';
 
-export const stateToReply = (state: PBO_STATES): string => {
-  return 'lol';
+export const pboStateToReply = (state: PBO_STATES): string => {
+  switch (state) {
+    case PBO_STATES.DOWNLOAD_BAD_HEADERS:
+    case PBO_STATES.DOWNLOAD_BAD_HOST:
+    case PBO_STATES.DOWNLOAD_BAD_STATUS_CODE:
+      return `There was an issue with your host. Maybe try a different host site?`;
+    case PBO_STATES.DOWNLOAD_OK: 'oke!'
+  }
+
+  return 'An unknown error occurred. Try again later';
 }

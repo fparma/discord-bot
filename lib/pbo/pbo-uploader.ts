@@ -31,7 +31,6 @@ export abstract class PboUploader {
       this.log.error('Error during upload of ', pboFilePath, err);
       return null;
     }
-
   }
 
   private static getPboNames(files: SftpClient.FileInfo[]) {
