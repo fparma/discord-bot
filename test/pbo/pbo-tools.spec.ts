@@ -1,7 +1,6 @@
 import * as proxyquire from 'proxyquire';
 import * as path from 'path';
 import { resolve } from 'path';
-import { PboTools } from '../../lib/pbo/pbo-tools';
 import { Helpers } from '../helpers';
 import pboToolsType = require('../../lib/pbo/pbo-tools');
 

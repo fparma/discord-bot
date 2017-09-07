@@ -21,7 +21,6 @@ export abstract class PboUploader {
       const list = await sftp.list(cwd);
       const files = this.getPboNames(list);
       finalUploadName = this.getValidFilename(wantedUploadName, files);
-      if (!finalUploadName.endsWith('.pbo')) finalUploadName += '.pbo';
 
       await sftp.put(pboFilePath, `${cwd}/${finalUploadName}`);
       await sftp.end();
@@ -50,6 +49,7 @@ export abstract class PboUploader {
     while (matches.includes(ret)) {
       ret = this.appendVersion(wantedLower, `_v${++i}`);
     }
+    if (!ret.endsWith('.pbo')) ret += '.pbo';
     return ret;
   }
 

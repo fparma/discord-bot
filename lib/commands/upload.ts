@@ -52,7 +52,6 @@ export class UploadCommand implements Command {
 
   static async download(url: string, pboPath: string) {
     const status = await PboDownloader.verifyHeaders(url);
-    console.log('headers', status);
     if (status !== PBO_STATES.DOWNLOAD_HEADERS_OK) return status;
     return PboDownloader.download(url, pboPath)
   }

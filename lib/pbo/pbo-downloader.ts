@@ -6,8 +6,8 @@ import { PBO_STATES } from './pbo-states-enum';
 
 
 export abstract class PboDownloader {
+  static MAX_FILESIZE = 10485760; // 10mb
   private static log = LoggerFactory.create(PboDownloader);
-  private static MAX_FILESIZE = 10485760; // 10mb
 
   static checkUrl(url: string): boolean {
     return new RegExp('^https?://').test(url) && url.endsWith('.pbo');
@@ -26,7 +26,7 @@ export abstract class PboDownloader {
 
   static download(url: string, filePath: string): Promise<PBO_STATES> {
     this.log.info('Downloading file', url);
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       const stream = needle.get(url);
       let totalSize = 0;
 
@@ -34,15 +34,16 @@ export abstract class PboDownloader {
         totalSize += PboDownloader.calculateStreamSize(stream);
         if (totalSize > PboDownloader.MAX_FILESIZE) {
           this.log.info(`Aborting download for ${url}, file too large`);
-          (stream as any).request.abort();
-          reject(PBO_STATES.DOWNLOAD_FILE_TOO_LARGE);
+          (stream as any).request.abort(); // needle adds request but it's not typed
+          resolve(PBO_STATES.DOWNLOAD_FILE_TOO_LARGE);
         }
       });
 
       stream.on('end', err => {
+
         if (err) {
           this.log.warn('Download interrupted', url, err);
-          return reject(PBO_STATES.DOWNLOAD_BAD_HOST);
+          return resolve(PBO_STATES.DOWNLOAD_BAD_HOST);
         }
 
         this.log.info(`Download finished for url: ${url}`);
@@ -52,20 +53,9 @@ export abstract class PboDownloader {
     });
   }
 
-  private static calculateStreamSize(stream: NodeJS.ReadableStream) {
-    let size = 0;
-    let chunck = null;
-
-    while (chunck = stream.read()) {
-      size += chunck.length;
-    }
-    return size;
-  }
-
-
   private static verifyHeaderResponse(response: IncomingMessage): PBO_STATES {
     const { statusCode = 500, headers } = response;
-    if (+statusCode >= 400) return PBO_STATES.DOWNLOAD_BAD_HOST;
+    if (+statusCode >= 400) return PBO_STATES.DOWNLOAD_BAD_STATUS_CODE;
 
     const length = headers ? +headers['content-length'] : null;
     if (!length) return PBO_STATES.DOWNLOAD_BAD_HOST;
@@ -86,5 +76,16 @@ export abstract class PboDownloader {
         resolve(response);
       });
     });
+  }
+
+  private static calculateStreamSize(stream: NodeJS.ReadableStream) {
+    let size = 0;
+    let chunck = null;
+
+    while (chunck = stream.read()) {
+      size += chunck.length;
+    }
+
+    return size;
   }
 }
