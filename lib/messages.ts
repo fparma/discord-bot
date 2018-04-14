@@ -1,9 +1,11 @@
 import { PBO_STATES } from './pbo/pbo-states-enum';
 
+export const UNKNOWN_ERROR = 'Sorry, an unknown error occurred';
+
 export const DB_ERROR = 'There was an issue contacting database. Try again later!';
 export const DB_USER_NOT_FOUND = 'Sorry, could not find that user';
 
-export const REPLY_PROVIDE_ARGUMENT = 'Please provide an argument';
+export const REPLY_PROVIDE_ARGUMENT = 'Please provide correct argument(s)';
 export const REPLY_USER_STATS = (name: string, date: Date, count: number): string => {
   const event = count === 1 ? 'event' : 'events';
   return `${name} joined on ${date.toISOString().substr(0, 10)} and has registered for ${count} ${event}`;
@@ -18,6 +20,8 @@ export const UPLOAD_VALIDATION_INVALID_REPO = (repos: string[]) => `Provide a va
 export const UPLOAD_VALIDATION_LONGER_NAME = 'Please provide a longer name (min 6 chars)';
 export const UPLOAD_VALIDATION_PROVIDE_WORLD = 'Invalid wanted filename. Did you include world? (example.tanoa)';
 export const UPLOAD_VALIDATION_INVALID_URL = 'Bad URL. Must be a direct link to a .pbo';
+
+export const UPLOAD_COMPLETED = (name: string) => `Done, uploaded as ${name}`
 
 export const pboStateToReply = (state: PBO_STATES): string => {
   switch (state) {

@@ -17,13 +17,13 @@ export abstract class PboTools {
     return new Promise((resolve, reject) => {
       exec(command, (err, stdout, stderr) => {
         if (err) return reject(err);
-        const folder = path.resolve(filePath.slice(0, filePath.lastIndexOf('.pbo')));
-        resolve(folder);
+        resolve(filePath.slice(0, filePath.lastIndexOf('.pbo')));
       });
     });
   }
 
   static lintPboFolder(folderPath: string) {
+    this.log.debug(folderPath)
     return new Promise((resolve, reject) => {
       fs.access(path.join(folderPath, 'mission.sqm'), fs.constants.R_OK, (err) => {
         if (err) {
@@ -35,14 +35,14 @@ export abstract class PboTools {
         }
 
         const command = `makepbo -WP ${folderPath} bla.pbo`;
-        exec(command, (err: LintError, stdout, stderr) => {
+        exec(command, (err, stdout, stderr) => {
           if (!err) return resolve();
 
-          const lintMessages = PboTools.getLintErrors(err, stdout, folderPath);
+          const lintMessages = PboTools.getLintErrors(err as LintError, stdout, folderPath);
           if (lintMessages) return reject(lintMessages);
 
           const msg = [folderPath, stdout, stderr].join(' - ');
-          return reject(new Error(`Makepbo fail ${err.code} ${msg}`));
+          return reject(new Error(`Makepbo fail ${(err as LintError).code} ${msg}`));
         });
       });
     });

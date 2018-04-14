@@ -60,3 +60,9 @@ abstract class Bootstrap {
 }
 
 Bootstrap.init();
+
+// Exit on unhandled rejections
+process.on('unhandledRejection', error => {
+  console.error('Exiting due to unhandled promise rejection', error);
+  process.exit(1);
+});

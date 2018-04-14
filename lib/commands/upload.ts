@@ -9,6 +9,8 @@ import { Database } from './../database';
 import { LoggerFactory } from '../logger';
 import { PboDownloader } from '../pbo/pbo-downloader';
 import { PBO_STATES } from '../pbo/pbo-states-enum';
+import { PboTools } from '../pbo/pbo-tools';
+import { PboUploader } from '../pbo/pbo-uploader';
 
 export class UploadCommand implements Command {
   private log = LoggerFactory.create(UploadCommand);
@@ -19,8 +21,13 @@ export class UploadCommand implements Command {
   constructor(public readonly tempFolder: string) {
   }
 
+  // TODO: clean this up
   async handleMessage(arg: string, sendReply: (message: string | string[]) => void, message: Message) {
     const [repo, url, wantedName] = arg.split(' ').map((v = '') => v.trim());
+    if (!repo || !url) {
+      return sendReply(Messages.REPLY_PROVIDE_ARGUMENT);
+    }
+
     const sanitizedName = UploadCommand.sanitizePboName(url, wantedName);
     this.log.info(`url: ${url}, repo: ${repo}, wanted name: ${wantedName}, sanitized: ${sanitizedName}`);
 
@@ -43,15 +50,40 @@ export class UploadCommand implements Command {
       sendReply(reply);
     }
 
-    const downloadState = await UploadCommand.download(url, pboPath);
-    this.log.debug('Download state after downloading:', downloadState);
-    if (downloadState !== PBO_STATES.DOWNLOAD_OK) {
-      return done(Messages.pboStateToReply(downloadState));
+    try {
+      const downloadState = await UploadCommand.downloadPbo(url, pboPath);
+      this.log.debug('Download state after downloading:', downloadState);
+      if (downloadState !== PBO_STATES.DOWNLOAD_OK) {
+        return done(Messages.pboStateToReply(downloadState));
+      }
+    } catch (err) {
+      this.log.error('Failed to download pbo', url, err);
+      return done(Messages.UNKNOWN_ERROR);
     }
 
+    // TODO: rewrite PboTools and separate errors from lint messages
+    try {
+      await PboTools.extractPbo(pboPath);
+      await PboTools.lintPboFolder(pboFolder);
+    } catch (error) {
+      if (typeof error === 'string') {
+        return done(error);
+      } else {
+        this.log.error(error);
+        return done(Messages.UNKNOWN_ERROR);
+      }
+    }
+
+    try {
+      const finalName = await PboUploader.uploadPbo(repo, pboPath, sanitizedName);
+      return done(Messages.UPLOAD_COMPLETED(finalName));
+    } catch (err) {
+      this.log.error('Failed to upload pbo', err);
+      return done(Messages.UNKNOWN_ERROR);
+    }
   }
 
-  static async download(url: string, pboPath: string) {
+  static async downloadPbo(url: string, pboPath: string) {
     const status = await PboDownloader.verifyHeaders(url);
     if (status !== PBO_STATES.DOWNLOAD_HEADERS_OK) return status;
     return PboDownloader.download(url, pboPath)

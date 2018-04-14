@@ -40,7 +40,6 @@ export abstract class PboDownloader {
       });
 
       stream.on('end', err => {
-
         if (err) {
           this.log.warn('Download interrupted', url, err);
           return resolve(PBO_STATES.DOWNLOAD_BAD_HOST);
