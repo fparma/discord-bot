@@ -12,7 +12,7 @@ type Partial<T> = {
   [K in keyof T]?: T[K];
 }
 
-fdescribe('PboDownloader', () => {
+describe('PboDownloader', () => {
   let mock: any = {};
   const pboPath = resolve('test/testing/atest.pbo')
   const pboUrl = 'http://testing/apbo.pbo';
