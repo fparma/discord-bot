@@ -37,9 +37,9 @@ abstract class Bootstrap {
   }
 
   private static setupAnnouncer(db: Database, bot: DiscordBot) {
-    // TODO: correct channel
-    const channel = bot.client.users.find('id', '106088065050632192'); //bot.client.channels.find('id', '258530805138194442');
-    const announcer = new EventsAnnouncer(db, channel);
+    const channel = bot.client.channels.get('258530805138194442');
+    // channels has an incorrect typescript definition
+    const announcer = new EventsAnnouncer(db, channel as any);
     announcer.pollNewEvents();
   }
 

@@ -12,6 +12,14 @@ import { PBO_STATES } from '../pbo/pbo-states-enum';
 import { PboTools } from '../pbo/pbo-tools';
 import { PboUploader } from '../pbo/pbo-uploader';
 
+// TODO: from legacy. move this into a generic function
+const uploadedThrottle = new Map();
+function isThrottled(authorId: string) {
+  if (!uploadedThrottle.has(authorId)) return false;
+  const lastTime = uploadedThrottle.get(authorId);
+  return ((Date.now() - lastTime) / 1000 < 30);
+}
+
 export class UploadCommand implements Command {
   private log = LoggerFactory.create(UploadCommand);
   readonly type = '!upload';
@@ -23,6 +31,11 @@ export class UploadCommand implements Command {
 
   // TODO: clean this up
   async handleMessage(arg: string, sendReply: (message: string | string[]) => void, message: Message) {
+    if (isThrottled(message.author.id)) {
+      return sendReply('Please wait 30 seconds between uploading');
+    }
+    uploadedThrottle.set(message.author.id, Date.now());
+
     const [repo, url, wantedName] = arg.split(' ').map((v = '') => v.trim());
     if (!repo || !url) {
       return sendReply(Messages.REPLY_PROVIDE_ARGUMENT);

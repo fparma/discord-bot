@@ -44,8 +44,6 @@ export class DiscordBot {
    */
   private onMessage(message: Discord.Message): void {
     if (this.user.id === message.author.id) return;
-    // TODO: remove when ready
-    if (message.author.id !== '106088065050632192') return;
     
     const content = message.content.trim();
     const commandType = ((/^(![^\s]+)/.exec(content) || [])[0] || '').toLowerCase();
