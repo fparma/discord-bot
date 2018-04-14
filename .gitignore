@@ -2,6 +2,7 @@
 .env
 env
 cache.json
+temp
 
 # platform
 .DS_Store
