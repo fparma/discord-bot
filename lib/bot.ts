@@ -26,6 +26,7 @@ export class DiscordBot {
 
     this.client.on('disconnect', err => {
       this.log.fatal('Websocket disconnected', err);
+      throw err;
     });
 
     try {

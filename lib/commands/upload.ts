@@ -13,18 +13,18 @@ import { PBO_STATES } from '../pbo/pbo-states-enum';
 export class UploadCommand implements Command {
   private log = LoggerFactory.create(UploadCommand);
   readonly type = '!upload';
-  readonly usageInfo = 'Uploads a pbo to the server. Usage: !upload (url) (optional: wanted pbo name. MUST INCLUDE WORLD). Example: !upload http://www.dl.com/test.pbo tvt30_terry.tanoa';
+  readonly usageInfo = 'Uploads a pbo to the server. Usage: !upload (repo) (url) (optional: wanted pbo name. MUST INCLUDE WORLD). Example: !upload main http://www.dl.com/test.pbo tvt30_terry.tanoa';
   readonly rateLimit = 20;
 
   constructor(public readonly tempFolder: string) {
   }
 
   async handleMessage(arg: string, sendReply: (message: string | string[]) => void, message: Message) {
-    const [url, wantedName] = arg.split(' ').map((v = '') => v.trim());
+    const [repo, url, wantedName] = arg.split(' ').map((v = '') => v.trim());
     const sanitizedName = UploadCommand.sanitizePboName(url, wantedName);
-    this.log.info(`url:${url}, wanted name: ${wantedName}, sanitized: ${sanitizedName}`);
+    this.log.info(`url: ${url}, repo: ${repo}, wanted name: ${wantedName}, sanitized: ${sanitizedName}`);
 
-    const validateMessage = UploadCommand.validate(url, sanitizedName);
+    const validateMessage = UploadCommand.validate(url, repo, sanitizedName);
     if (validateMessage != null) {
       this.log.info('Upload validation failed', url, 'reason:', validateMessage);
       sendReply(validateMessage);
@@ -48,6 +48,7 @@ export class UploadCommand implements Command {
     if (downloadState !== PBO_STATES.DOWNLOAD_OK) {
       return done(Messages.pboStateToReply(downloadState));
     }
+
   }
 
   static async download(url: string, pboPath: string) {
@@ -72,9 +73,14 @@ export class UploadCommand implements Command {
     return idx === -1 ? str.length : idx;
   }
 
-  private static validate(url: string, name: string) {
+  private static validate(url: string, repo: string, name: string) {
     if (!PboDownloader.checkUrl(url)) {
       return Messages.UPLOAD_VALIDATION_INVALID_URL;
+    }
+
+    const repos: string[] = `${process.env.FTP_REPOS}`.split(',');
+    if (!repos.includes(repo)) {
+      return Messages.UPLOAD_VALIDATION_INVALID_REPO(repos);
     }
 
     if (name.length < 5) {

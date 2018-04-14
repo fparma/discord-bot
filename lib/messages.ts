@@ -14,6 +14,7 @@ export const NEW_EVENT = (name: string, authors: string, permalink: string) => {
   return `:joystick: New event! ${name} by ${authors}. ${url} :rocket:`;
 }
 
+export const UPLOAD_VALIDATION_INVALID_REPO = (repos: string[]) => `Provide a valid repo (${repos})`;
 export const UPLOAD_VALIDATION_LONGER_NAME = 'Please provide a longer name (min 6 chars)';
 export const UPLOAD_VALIDATION_PROVIDE_WORLD = 'Invalid wanted filename. Did you include world? (example.tanoa)';
 export const UPLOAD_VALIDATION_INVALID_URL = 'Bad URL. Must be a direct link to a .pbo';
