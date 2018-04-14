@@ -7,7 +7,7 @@ import { LoggerFactory } from './logger';
 
 export class EventsAnnouncer {
   private cache: Cache;
-  private interval: NodeJS.Timer;
+  private interval: NodeJS.Timer | null = null;
   private log = LoggerFactory.create(EventsAnnouncer);
   private static POLL_DELAY = 30 * 1000;
 
