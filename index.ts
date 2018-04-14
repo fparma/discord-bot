@@ -24,7 +24,7 @@ abstract class Bootstrap {
 
     try {
       await Promise.all([
-        db.connect(process.env.DB_URL),
+        db.connect(process.env.DB_URI),
         bot.connect(process.env.BOT_TOKEN)
       ]);
     } catch (err) {
