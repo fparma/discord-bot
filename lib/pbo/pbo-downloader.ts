@@ -63,7 +63,7 @@ export abstract class PboDownloader {
     const type = headers ? headers['content-type'] : null;
     // we could check for application/octet-stream here but there's no garantuee that'll be sent back
     // checking for text/html should be enough to cover custom 404 sites, that returns 200 status code
-    if (!type || type == 'text/html') return PBO_STATES.DOWNLOAD_BAD_HOST;
+    if (type == 'text/html') return PBO_STATES.DOWNLOAD_BAD_HOST;
 
     return PBO_STATES.DOWNLOAD_HEADERS_OK;
   }
