@@ -1,12 +1,13 @@
 import * as SftpClient from 'ssh2-sftp-client';
 import * as path from 'path';
 import { LoggerFactory } from '../logger';
+import { SftpHandler } from '../util/sftp';
 
 export abstract class PboUploader {
   private static log = LoggerFactory.create(PboUploader);
 
   static async uploadPbo(repo: string, pboFilePath: string, wantedUploadName: string) {
-    const sftp = await PboUploader.getConnection();
+    const sftp = await SftpHandler.getConnection();
     
     // can't use path.join, must be forwardslash
     const ftpRepoFolder = `${String(process.env.FTP_CWD_REPOS)}/${repo}/mpmissions`;
@@ -16,7 +17,7 @@ export abstract class PboUploader {
     const files = this.getPboNames(list);
     const finalUploadName = this.getValidFilename(wantedUploadName, files);
     
-    const lastDeploy = await this.getLastDeploy(sftp);
+    const lastDeploy = await SftpHandler.getLastDeploy(sftp);
     const targetRepoFolder = `${ftpRepoFolder}/${finalUploadName}`;
     this.log.info(`Uploading ${pboFilePath} to ${targetRepoFolder}`);
     await sftp.put(pboFilePath, targetRepoFolder);
@@ -29,41 +30,6 @@ export abstract class PboUploader {
 
     await sftp.end();
     return finalUploadName;
-  }
-  
-  private static async getConnection() {
-    const sftp = new SftpClient();
-
-    try {
-      await sftp.connect({
-        host: process.env.FTP_HOST,
-        port: Number(process.env.FTP_PORT),
-        username: process.env.FTP_USER,
-        password: process.env.FTP_PASSWORD
-      });
-      return sftp;
-    } catch (err) {
-      sftp.end();
-      this.log.error('Connection error', err);
-      throw err;
-    }
-  }
-
-  private static async getLastDeploy(sftp: SftpClient.Client) {
-    const stream = await sftp.get(String(process.env.FTP_DEPLOYED_REPO_INFO));
-
-    return new Promise((resolve, reject) => {
-      let str = '';
-      stream.on('data', chunck => str += chunck.toString());
-      stream.on('error', err => stream.emit('end', err));
-      stream.on('end', err => {
-        if (err) {
-          this.log.error('Failed to download last deploy info');
-          return reject(err);
-        } 
-        return resolve(str);
-      });
-    })
   }
 
   private static getPboNames(files: SftpClient.FileInfo[]) {
@@ -88,7 +54,7 @@ export abstract class PboUploader {
   }
 
   private static appendVersion(filename: string, version: string) {
-    const dotIndex = filename.lastIndexOf(".");
+    const dotIndex = filename.lastIndexOf('.');
     if (dotIndex == -1) return filename + version;
     else return filename.substring(0, dotIndex) + version + filename.substring(dotIndex);
   }

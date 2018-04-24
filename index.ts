@@ -10,6 +10,7 @@ import { LoggerFactory } from './lib/logger';
 import { EventsAnnouncer } from './lib/events-announcer';
 import { Message } from 'discord.js';
 import { UploadCommand } from './lib/commands/upload'
+import { DeployedCommand } from './lib/commands/deployed';
 
 abstract class Bootstrap {
   private static log = LoggerFactory.create(Bootstrap);
@@ -46,6 +47,7 @@ abstract class Bootstrap {
   private static registerCommands(bot: DiscordBot, db: Database) {
     bot.registerCommand(new PingCommand());
     bot.registerCommand(new StatsCommand(db));
+    bot.registerCommand(new DeployedCommand());
 
     const tempFolder = path.join(__dirname, 'temp');
     fs.mkdir(tempFolder, (err) => {

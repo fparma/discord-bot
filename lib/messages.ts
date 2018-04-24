@@ -34,3 +34,5 @@ export const pboStateToReply = (state: PBO_STATES): string => {
 
   return 'An unknown error occurred. Try again later';
 }
+
+export const CURRENTLY_DEPLOYED = (repo: string) => `The currently deployed repo seems to be ${repo}`

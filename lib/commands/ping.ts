@@ -2,6 +2,7 @@ import { Message } from 'discord.js';
 import { Database } from './../database';
 import { Command } from './command';
 
+
 export class PingCommand implements Command {
   readonly type = '!ping';
   readonly usageInfo = 'replying with the pong';
