@@ -22,6 +22,7 @@ export abstract class PboUploader {
     this.log.info(`Uploading ${pboFilePath} to ${targetRepoFolder}`);
     await sftp.put(pboFilePath, targetRepoFolder);
 
+    this.log.info(`Uploaded to ${repo}, last deploy: ${lastDeploy}, upload to mpmissions: ${repo === lastDeploy}`);
     if (repo === lastDeploy) {
       const targetServerFolder = `${String(process.env.FTP_CWD_SERVER_MISSIONS)}/${finalUploadName}`;
       this.log.info(`Uploading ${pboFilePath} to ${targetServerFolder}`);

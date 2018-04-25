@@ -37,7 +37,7 @@ export abstract class SftpHandler {
           this.log.error('Failed to download last deploy info');
           return reject(err);
         } 
-        return resolve(str);
+        return resolve(str.trim());
       });
     })
   }
