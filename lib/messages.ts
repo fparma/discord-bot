@@ -29,6 +29,8 @@ export const pboStateToReply = (state: PBO_STATES): string => {
     case PBO_STATES.DOWNLOAD_BAD_HOST:
     case PBO_STATES.DOWNLOAD_BAD_STATUS_CODE:
       return `There was an issue with your host. Maybe try a different host site?`;
+    case PBO_STATES.DOWNLOAD_FILE_TOO_LARGE:
+      return 'File is too large, max 10mb.';
     case PBO_STATES.DOWNLOAD_OK: 'oke!'
   }
 
