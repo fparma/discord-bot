@@ -38,3 +38,7 @@ export const pboStateToReply = (state: PBO_STATES): string => {
 }
 
 export const CURRENTLY_DEPLOYED = (repo: string) => `The currently deployed repo seems to be ${repo}`
+
+export const MEMBER_BANNED = 'Ding dong bannu'
+export const MEMBER_CANNOT_BAN = 'I am unable to ban that user'
+export const MEMBER_WILL_BE_BANNED = 'User will be banned when joining'

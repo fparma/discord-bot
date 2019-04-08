@@ -1,18 +1,18 @@
-import { LoggerFactory } from './logger';
 import { writeFile } from 'fs';
 import { resolve } from 'path';
+import { LoggerFactory } from './logger';
 
-export interface Cache { [key: string]: null };
+export interface Cache { [key: string]: null | { [key: string]: string }, autoBan: { [key: string]: string } };
 
-export abstract class EventsCache {
-  private static log = LoggerFactory.create(EventsCache);
+export abstract class AppCache {
+  private static log = LoggerFactory.create(AppCache);
 
   static read(): Cache {
     try {
       return require('../cache.json');
     } catch (e) {
       this.log.warn('Failed to read cache.json file, using empty object', e);
-      return {};
+      return { autoBan: {} };
     }
   }
 

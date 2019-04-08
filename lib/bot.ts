@@ -1,8 +1,7 @@
-import { Database } from './database';
 import * as Discord from 'discord.js';
-import { LoggerFactory } from './logger';
 import { Command } from './commands/command';
-import { EventsAnnouncer } from './events-announcer';
+import { LoggerFactory } from './logger';
+import { isAdmin } from './util/isAdmin';
 
 export class DiscordBot {
   private log = LoggerFactory.create(DiscordBot);
@@ -43,8 +42,8 @@ export class DiscordBot {
    * @param message
    */
   private onMessage(message: Discord.Message): void {
-    if (this.user.id === message.author.id) return;
-    
+    if (message.author.bot) return
+
     const content = message.content.trim();
     const commandType = ((/^(![^\s]+)/.exec(content) || [])[0] || '').toLowerCase();
 
@@ -54,7 +53,9 @@ export class DiscordBot {
     }
 
     if (!this.commands.has(commandType)) return;
-    this.handleExistingCommand(commandType, content, message);
+    const command = this.commands.get(commandType) as Command;
+    if (command.requireAdmin && !isAdmin(message.member)) return;
+    this.handleExistingCommand(command, content, message);
   }
 
   /**
@@ -63,14 +64,14 @@ export class DiscordBot {
    * @param content 
    * @param message 
    */
-  private handleExistingCommand(type: string, content: string = '', message: Discord.Message): void {
-    const args = content.slice(content.indexOf(' ')).trim(); // remove command type
-    const command = this.commands.get(type);
+  private handleExistingCommand(command: Command, content: string = '', message: Discord.Message): void {
+    const firstSpace = content.indexOf(' ')
+    const args = content.slice(firstSpace === -1 ? content.length : firstSpace).trim(); // remove command type
 
-    const {author} = message;
+    const { author } = message;
     this.log.info(`Running command from ${this.formatAuthor(author)}: ${message.content}`);
     const handleReply = (reply: string | string[]) => this.replyToMessage(reply, message);
-    command!.handleMessage(args, handleReply, message);
+    command.handleMessage(args, handleReply, message);
   }
 
   /**
@@ -121,7 +122,11 @@ export class DiscordBot {
    */
   private printHelp(message: Discord.Message): void {
     const replies = ['!help - this command'];
-    this.commands.forEach((cmd, key) => replies.push(`${key} - ${cmd.usageInfo}`));
+    this.commands.forEach((cmd, key) => {
+      if (!cmd.requireAdmin || (cmd.requireAdmin && isAdmin(message.member))) {
+        replies.push(`${key} - ${cmd.usageInfo}`)
+      }
+    });
     replies.sort((a, b) => a.localeCompare(b));
     this.replyToMessage(replies, message);
   }

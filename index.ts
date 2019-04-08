@@ -1,16 +1,18 @@
-import * as fs from 'fs';
-import * as path from 'path';
-import { StatsCommand } from './lib/commands/stats';
-import { Database } from './lib/database';
 import * as Discord from 'discord.js';
-import { DiscordBot } from './lib/bot';
-import { PingCommand } from './lib/commands/ping';
+import * as fs from 'fs';
 import * as mongodb from 'mongodb';
-import { LoggerFactory } from './lib/logger';
-import { EventsAnnouncer } from './lib/events-announcer';
-import { Message } from 'discord.js';
-import { UploadCommand } from './lib/commands/upload'
+import * as path from 'path';
+import { DiscordBot } from './lib/bot';
+import { AppCache } from './lib/cache';
+import { AutobanCommand } from './lib/commands/autoban';
 import { DeployedCommand } from './lib/commands/deployed';
+import { PingCommand } from './lib/commands/ping';
+import { StatsCommand } from './lib/commands/stats';
+import { UploadCommand } from './lib/commands/upload';
+import { Database } from './lib/database';
+import { EventsAnnouncer } from './lib/events-announcer';
+import { LoggerFactory } from './lib/logger';
+import { banMember } from './lib/util/banMember';
 
 abstract class Bootstrap {
   private static log = LoggerFactory.create(Bootstrap);
@@ -21,7 +23,6 @@ abstract class Bootstrap {
     const db = new Database(new mongodb.MongoClient());
     const bot = new DiscordBot(new Discord.Client());
     this.registerCommands(bot, db);
-
 
     try {
       await Promise.all([
@@ -34,6 +35,7 @@ abstract class Bootstrap {
     }
 
     this.setupAnnouncer(db, bot);
+    this.setupAutoban(bot)
     this.log.info('Started');
   }
 
@@ -44,10 +46,29 @@ abstract class Bootstrap {
     announcer.pollNewEvents();
   }
 
+  private static setupAutoban(bot: DiscordBot) {
+    bot.client.on('guildMemberAdd', async member => {
+      if (!member) return
+      const { id, nickname } = member
+
+      try {
+        const { autoBan } = AppCache.read()
+
+        if (autoBan.hasOwnProperty(id)) {
+          this.log.info('Autobanning user', { id, nickname })
+          await banMember(member, autoBan[id])
+        }
+      } catch (err) {
+        this.log.error('Unable to autoban user', { id, nickname }, err)
+      }
+    })
+  }
+
   private static registerCommands(bot: DiscordBot, db: Database) {
     bot.registerCommand(new PingCommand());
     bot.registerCommand(new StatsCommand(db));
     bot.registerCommand(new DeployedCommand());
+    bot.registerCommand(new AutobanCommand());
 
     const tempFolder = path.join(__dirname, 'temp');
     fs.mkdir(tempFolder, (err) => {

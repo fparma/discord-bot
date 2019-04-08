@@ -1,19 +1,19 @@
-import { LoggerFactory } from './../logger';
 import { Message } from 'discord.js';
-import { Database } from './../database';
-import { Command } from './command';
-import { SftpHandler } from '../util/sftp';
 import * as Messages from '../messages';
+import { SftpHandler } from '../util/sftp';
+import { LoggerFactory } from './../logger';
+import { Command } from './command';
 
 export class DeployedCommand implements Command {
   private log = LoggerFactory.create(DeployedCommand);
   readonly type = '!deployed';
   readonly usageInfo = 'replies with currently deployed repo';
   readonly rateLimit = 10;
+  readonly requireAdmin = false
 
   async handleMessage(arg: string, sendReply: (message: string | string[]) => void, message: Message) {
     message.channel.startTyping();
-    
+
     try {
       const sftp = await SftpHandler.getConnection();
       const deployed = await SftpHandler.getLastDeploy(sftp) as string;

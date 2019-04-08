@@ -1,9 +1,8 @@
 import * as Discord from 'discord.js';
-import { Event, Database } from './database';
-import { Cache, EventsCache } from './cache'
-import * as Messages from './messages';
-import { Message } from 'discord.js';
+import { AppCache, Cache } from './cache';
+import { Database, Event } from './database';
 import { LoggerFactory } from './logger';
+import * as Messages from './messages';
 
 export class EventsAnnouncer {
   private cache: Cache;
@@ -15,7 +14,7 @@ export class EventsAnnouncer {
     private db: Database,
     private channel: Discord.PartialTextBasedChannelFields
   ) {
-    this.cache = EventsCache.read();
+    this.cache = AppCache.read();
   }
 
   pollNewEvents(): boolean {
@@ -37,7 +36,7 @@ export class EventsAnnouncer {
 
   private saveToCache(ids: string[]) {
     ids.forEach(id => this.cache[id] = null);
-    EventsCache.write(Object.assign({}, this.cache));
+    AppCache.write(Object.assign({}, this.cache));
   }
 
   private publishEventMessage(events: Event[]) {

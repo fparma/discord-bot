@@ -1,13 +1,14 @@
-import { LoggerFactory } from './../logger';
-import { Database } from './../database';
 import { Message } from 'discord.js';
 import * as Messages from '../messages';
+import { Database } from './../database';
+import { LoggerFactory } from './../logger';
 import { Command } from './command';
 
 export class StatsCommand implements Command {
   readonly type = '!stats';
   readonly usageInfo = 'Get event stats for user. Usage: !stats (website username OR steamID64)';
   readonly rateLimit = 4;
+  readonly requireAdmin = false
   private static log = LoggerFactory.create(StatsCommand);
 
   constructor(private db: Database) {
@@ -28,7 +29,7 @@ export class StatsCommand implements Command {
       this.log.debug('Searching user', userNameOrSteamId);
       const user = await db.findOneUser(userNameOrSteamId);
 
-      if (!user)  {
+      if (!user) {
         this.log.debug('No such user', userNameOrSteamId);
         return Messages.DB_USER_NOT_FOUND;
       }

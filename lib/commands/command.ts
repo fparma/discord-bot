@@ -1,10 +1,10 @@
-import { Database } from './../database';
 import { Message } from 'discord.js';
 
 export interface Command {
   readonly type: string;
   readonly usageInfo: string;
   readonly rateLimit: number;
+  readonly requireAdmin: boolean
 
   handleMessage(
     arg: string,

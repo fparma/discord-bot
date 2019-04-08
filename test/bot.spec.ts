@@ -1,14 +1,13 @@
-import { DiscordBot } from './../lib/bot';
 import * as Discord from 'discord.js';
-import { Database } from '../lib/database';
-import * as mongodb from 'mongodb';
 import { Command } from '../lib/commands/command';
+import { DiscordBot } from './../lib/bot';
 import { Helpers } from './helpers';
 
 class TestCmd implements Command {
   type = '!test';
   usageInfo = 'usage test';
   rateLimit = 0;
+  requireAdmin = false
   handleMessage() { }
 }
 
