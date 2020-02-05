@@ -1,4 +1,4 @@
-import { LoggerFactory } from '../lib/logger';
+import { LoggerFactory } from '../lib/logger'
 
 const noop = () => {}
 const fakeLog = {
@@ -6,12 +6,11 @@ const fakeLog = {
   info: noop,
   warn: noop,
   error: noop,
-  fatal: noop
+  fatal: noop,
 }
 
 export abstract class Helpers {
   static disableLogging() {
-    return spyOn(LoggerFactory, 'create').and.returnValue(fakeLog);
+    return spyOn(LoggerFactory, 'create').and.returnValue(fakeLog)
   }
 }
-
