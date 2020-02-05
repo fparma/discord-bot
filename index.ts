@@ -16,20 +16,23 @@ abstract class Bootstrap {
   private static log = LoggerFactory.create(Bootstrap)
 
   static async init() {
-    this.log.info('Using environment', process.env.NODE_ENV || 'development')
+    const isProd = process.env.NODE_ENV === 'production'
+    this.log.info('Using environment', isProd ? 'production' : 'development', { isProd })
 
     const db = new Database(new mongodb.MongoClient())
     const bot = new DiscordBot(new Discord.Client())
     this.registerCommands(bot, db)
 
     try {
-      await Promise.all([db.connect(process.env.DB_URI), bot.connect(process.env.BOT_TOKEN)])
+      await Promise.all([db.connect(process.env.DB_FPARMA_URI), bot.connect(process.env.BOT_TOKEN, isProd)])
     } catch (err) {
       this.log.fatal('An error occured during launch', err)
       process.exit(1)
     }
 
-    this.setupAnnouncer(db, bot)
+    if (isProd) {
+      this.setupAnnouncer(db, bot)
+    }
     this.log.info('Started')
   }
 

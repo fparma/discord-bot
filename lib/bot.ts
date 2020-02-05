@@ -15,12 +15,12 @@ export class DiscordBot {
    * Connect the bot using provided token
    * @param token
    */
-  async connect(token: string = '') {
+  async connect(token: string = '', isProd: boolean) {
     if (!token) throw new Error('Invalid token')
 
     this.client.once('ready', () => {
       this.log.info(`Connected to discord as "${this.user.username}"`)
-      this.client.on('message', msg => this.onMessage(msg))
+      this.client.on('message', msg => (isProd ? this.onMessage(msg) : this.handleDevelopmentMessage(msg)))
     })
 
     this.client.on('disconnect', err => {
@@ -37,12 +37,20 @@ export class DiscordBot {
     }
   }
 
+  handleDevelopmentMessage(message: Discord.Message) {
+    if (message.channel.type === 'dm') return
+
+    const BOT_TEST_CHANNEL = '563757919418712064'
+    if (message.channel.id !== BOT_TEST_CHANNEL) return
+    this.onMessage(message)
+  }
+
   /**
    * Handle an incoming message from the server
    * @param message
    */
   private onMessage(message: Discord.Message): void {
-    if (this.user.id === message.author.id) return
+    if (message.author.bot) return
 
     const content = message.content.trim()
     const commandType = ((/^(![^\s]+)/.exec(content) || [])[0] || '').toLowerCase()
