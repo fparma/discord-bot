@@ -75,6 +75,8 @@ export class DiscordBot {
     const args = content.slice(content.indexOf(' ')).trim() // remove command type
     const command = this.commands.get(type)
 
+    if (command!.onlyMods && !isModerator(message.member)) return
+
     const { author } = message
     this.log.info(`Running command from ${this.formatAuthor(author)}: ${message.content}`)
     const handleReply = (reply: string | string[]) => this.replyToMessage(reply, message)

@@ -36,9 +36,6 @@ export class AllowRoleCommand implements Command {
       return sendReply('This command can only be used in a guild channel')
     }
 
-    const member = getMemberFromMessage(message)
-    if (!isModerator(member)) return
-
     const roles = stringToRoles(message.guild, arg.split(' '))
     if (roles.size === 0) return sendReply('Please provide roles')
 
