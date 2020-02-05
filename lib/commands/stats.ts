@@ -8,6 +8,7 @@ export class StatsCommand implements Command {
   readonly type = '!stats'
   readonly usageInfo = 'Get event stats for user. Usage: !stats (website username OR steamID64)'
   readonly rateLimit = 4
+  readonly onlyMods = false
   private static log = LoggerFactory.create(StatsCommand)
 
   constructor(private db: Database) {}

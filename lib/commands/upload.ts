@@ -26,6 +26,7 @@ export class UploadCommand implements Command {
   readonly usageInfo =
     'Uploads a pbo to the server. Usage: !upload (repo) (url) (optional: wanted pbo name. MUST INCLUDE WORLD). Example: !upload main http://www.dl.com/test.pbo tvt30_terry.tanoa'
   readonly rateLimit = 20
+  readonly onlyMods = false
 
   constructor(public readonly tempFolder: string) {}
 

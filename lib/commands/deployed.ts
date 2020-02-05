@@ -10,6 +10,7 @@ export class DeployedCommand implements Command {
   readonly type = '!deployed'
   readonly usageInfo = 'replies with currently deployed repo'
   readonly rateLimit = 10
+  readonly onlyMods = false
 
   async handleMessage(arg: string, sendReply: (message: string | string[]) => void, message: Message) {
     message.channel.startTyping()

@@ -1,16 +1,20 @@
-import * as fs from 'fs'
-import * as path from 'path'
-import { StatsCommand } from './lib/commands/stats'
-import { Database } from './lib/database'
 import * as Discord from 'discord.js'
-import { DiscordBot } from './lib/bot'
-import { PingCommand } from './lib/commands/ping'
+import * as fs from 'fs'
 import * as mongodb from 'mongodb'
-import { LoggerFactory } from './lib/logger'
-import { EventsAnnouncer } from './lib/events-announcer'
-import { Message } from 'discord.js'
-import { UploadCommand } from './lib/commands/upload'
+import * as path from 'path'
+import { DiscordBot } from './lib/bot'
+import { BotDatabase } from './lib/bot-database'
+import { AllowRoleCommand } from './lib/commands/allow-role'
 import { DeployedCommand } from './lib/commands/deployed'
+import { DisallowRoleCommand } from './lib/commands/disallow-role'
+import { PingCommand } from './lib/commands/ping'
+import { StatsCommand } from './lib/commands/stats'
+import { UploadCommand } from './lib/commands/upload'
+import { Database } from './lib/database'
+import { EventsAnnouncer } from './lib/events-announcer'
+import { LoggerFactory } from './lib/logger'
+import { RoleCommand } from './lib/commands/add-role'
+import { RemoveRoleCommand } from './lib/commands/remove-role'
 
 abstract class Bootstrap {
   private static log = LoggerFactory.create(Bootstrap)
@@ -20,11 +24,16 @@ abstract class Bootstrap {
     this.log.info('Using environment', isProd ? 'production' : 'development', { isProd })
 
     const db = new Database(new mongodb.MongoClient())
+    const botDb = new BotDatabase(new mongodb.MongoClient())
     const bot = new DiscordBot(new Discord.Client())
-    this.registerCommands(bot, db)
+    this.registerCommands(bot, db, botDb)
 
     try {
-      await Promise.all([db.connect(process.env.DB_FPARMA_URI), bot.connect(process.env.BOT_TOKEN, isProd)])
+      await Promise.all([
+        db.connect(process.env.DB_FPARMA_URI),
+        botDb.connect(process.env.DB_BOT_URI),
+        bot.connect(process.env.BOT_TOKEN, isProd),
+      ])
     } catch (err) {
       this.log.fatal('An error occured during launch', err)
       process.exit(1)
@@ -43,10 +52,15 @@ abstract class Bootstrap {
     announcer.pollNewEvents()
   }
 
-  private static registerCommands(bot: DiscordBot, db: Database) {
+  private static registerCommands(bot: DiscordBot, db: Database, botDb: BotDatabase) {
     bot.registerCommand(new PingCommand())
     bot.registerCommand(new StatsCommand(db))
     bot.registerCommand(new DeployedCommand())
+    bot.registerCommand(new RoleCommand(botDb))
+    bot.registerCommand(new RemoveRoleCommand(botDb))
+
+    bot.registerCommand(new AllowRoleCommand(botDb))
+    bot.registerCommand(new DisallowRoleCommand(botDb))
 
     const tempFolder = path.join(__dirname, 'temp')
     fs.mkdir(tempFolder, err => {
