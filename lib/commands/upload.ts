@@ -1,16 +1,15 @@
+import { Message } from 'discord.js'
 import { unlink } from 'fs'
 import { basename, join } from 'path'
-import { Message } from 'discord.js'
 import * as rimraf from 'rimraf'
 import * as sanitizeFilename from 'sanitize-filename'
-import { Command } from './command'
-import * as Messages from '../messages'
-import { Database } from './../database'
 import { LoggerFactory } from '../logger'
+import * as Messages from '../messages'
 import { PboDownloader } from '../pbo/pbo-downloader'
 import { PBO_STATES } from '../pbo/pbo-states-enum'
 import { PboTools } from '../pbo/pbo-tools'
 import { PboUploader } from '../pbo/pbo-uploader'
+import { Command } from './command'
 
 // TODO: from legacy. move this into a generic function
 const uploadedThrottle = new Map()

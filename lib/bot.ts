@@ -1,9 +1,7 @@
-import { Database } from './database'
 import * as Discord from 'discord.js'
-import { LoggerFactory } from './logger'
 import { Command } from './commands/command'
-import { EventsAnnouncer } from './events-announcer'
-import { isModerator, isMessageInGuildChannel } from './util/discord'
+import { LoggerFactory } from './logger'
+import { isMessageInGuildChannel, isModerator } from './util/discord'
 
 export class DiscordBot {
   private log = LoggerFactory.create(DiscordBot)

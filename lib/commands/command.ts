@@ -1,4 +1,3 @@
-import { Database } from './../database'
 import { Message } from 'discord.js'
 
 export interface Command {

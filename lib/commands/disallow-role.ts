@@ -1,8 +1,8 @@
-import { GuildMember, Message } from 'discord.js'
+import { Message } from 'discord.js'
 import { BotDatabase } from '../bot-database'
 import { LoggerFactory } from '../logger'
 import * as Messages from '../messages'
-import { isModerator, isMessageInGuildChannel, stringToRoles } from '../util/discord'
+import { isMessageInGuildChannel, stringToRoles } from '../util/discord'
 import { Command } from './command'
 
 export class DisallowRoleCommand implements Command {

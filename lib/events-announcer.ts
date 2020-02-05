@@ -1,9 +1,8 @@
 import * as Discord from 'discord.js'
-import { Event, Database } from './database'
 import { Cache, EventsCache } from './cache'
-import * as Messages from './messages'
-import { Message } from 'discord.js'
+import { Database, Event } from './database'
 import { LoggerFactory } from './logger'
+import * as Messages from './messages'
 
 export class EventsAnnouncer {
   private cache: Cache

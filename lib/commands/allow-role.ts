@@ -1,9 +1,9 @@
-import { GuildMember, Message, PermissionResolvable } from 'discord.js'
+import { Message, PermissionResolvable } from 'discord.js'
 import { BotDatabase } from '../bot-database'
-import * as Messages from '../messages'
-import { Command } from './command'
 import { LoggerFactory } from '../logger'
-import { isModerator, isMessageInGuildChannel, getMemberFromMessage, stringToRoles } from '../util/discord'
+import * as Messages from '../messages'
+import { isMessageInGuildChannel, stringToRoles } from '../util/discord'
+import { Command } from './command'
 
 const INVALID_PERMISSION_ROLE: PermissionResolvable[] = [
   'ADMINISTRATOR',
