@@ -5,12 +5,13 @@
   "scripts": {
     "test": "jasmine-ts \"./test/**/*.spec.ts\"",
     "test-watch": "chokidar -p './test/**/*' -c 'npm run test'",
-    "start": "node -r ts-node/register -r dotenv/config index.ts"
+    "start": "node -r ts-node/register -r dotenv/config index.ts",
+    "setup-db": "docker run -d -p 27017-27019:27017-27019 --name mongodb mongo:3.6.12"
   },
   "author": "Cuel",
   "license": "ISC",
   "dependencies": {
-    "discord.js": "^11.3.2",
+    "discord.js": "^11.5.1",
     "dotenv": "^4.0.0",
     "mongodb": "^2.2.31",
     "needle": "^2.0.0",
