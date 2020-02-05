@@ -1,13 +1,13 @@
 import { Message } from 'discord.js'
 import { BotDatabase } from '../bot-database'
 import { Command } from './command'
-import { isMessageInGuildChannel, getMemberFromMessage } from '../util/discord'
+import { isMessageInGuildChannel, getMemberFromMessage, stringToRoles } from '../util/discord'
 import { LoggerFactory } from '../logger'
 import * as Messages from '../messages'
 
 export class RemoveRoleCommand implements Command {
   readonly type = '!removerole'
-  readonly usageInfo = 'Removes an assigned role. Usage: !removerole @arma-event @more'
+  readonly usageInfo = 'Removes an assigned role. Usage: !removerole arma-event more'
   readonly onlyMods = false
   readonly rateLimit = 0
   private log = LoggerFactory.create(RemoveRoleCommand)
@@ -19,9 +19,8 @@ export class RemoveRoleCommand implements Command {
       return sendReply('This command has to be used in a public channel')
     }
 
-    const roles = message.mentions.roles
-    if (roles.size === 0) return sendReply('Provide roles by @-mentioning them')
-
+    const roles = stringToRoles(message.guild, arg.split(' '))
+    if (roles.size === 0) return sendReply('Please provide roles')
     const roleIds = roles.map(role => role.id)
 
     try {

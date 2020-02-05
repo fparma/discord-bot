@@ -2,12 +2,12 @@ import { GuildMember, Message } from 'discord.js'
 import { BotDatabase } from '../bot-database'
 import { LoggerFactory } from '../logger'
 import * as Messages from '../messages'
-import { isModerator, isMessageInGuildChannel } from '../util/discord'
+import { isModerator, isMessageInGuildChannel, stringToRoles } from '../util/discord'
 import { Command } from './command'
 
 export class DisallowRoleCommand implements Command {
   readonly type = '!disallowrole'
-  readonly usageInfo = 'Removes a user assignable role. Usage: !disallowrole @arma event'
+  readonly usageInfo = 'Removes a user assignable role. Usage: !disallowrole arma-event'
   readonly onlyMods = true
   readonly rateLimit = 0
 
@@ -22,8 +22,8 @@ export class DisallowRoleCommand implements Command {
     const member = message.guild.members.get(message.author.id) as GuildMember
     if (!isModerator(member)) return
 
-    const roles = message.mentions.roles
-    if (roles.size === 0) return sendReply('Provide roles by @-mentioning them')
+    const roles = stringToRoles(message.guild, arg.split(' '))
+    if (roles.size === 0) return sendReply('Please provide roles')
 
     const ids = roles.map(role => role.id)
 

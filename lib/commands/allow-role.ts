@@ -3,7 +3,7 @@ import { BotDatabase } from '../bot-database'
 import * as Messages from '../messages'
 import { Command } from './command'
 import { LoggerFactory } from '../logger'
-import { isModerator, isMessageInGuildChannel, getMemberFromMessage } from '../util/discord'
+import { isModerator, isMessageInGuildChannel, getMemberFromMessage, stringToRoles } from '../util/discord'
 
 const INVALID_PERMISSION_ROLE: PermissionResolvable[] = [
   'ADMINISTRATOR',
@@ -24,7 +24,7 @@ const INVALID_PERMISSION_ROLE: PermissionResolvable[] = [
 
 export class AllowRoleCommand implements Command {
   readonly type = '!allowrole'
-  readonly usageInfo = 'Whitelists a role. Usage: !allowrole @arma event'
+  readonly usageInfo = 'Whitelists a role. Usage: !allowrole arma-event'
   readonly onlyMods = true
   readonly rateLimit = 0
 
@@ -39,8 +39,8 @@ export class AllowRoleCommand implements Command {
     const member = getMemberFromMessage(message)
     if (!isModerator(member)) return
 
-    const roles = message.mentions.roles
-    if (roles.size === 0) return sendReply('Provide roles by @-mentioning them')
+    const roles = stringToRoles(message.guild, arg.split(' '))
+    if (roles.size === 0) return sendReply('Please provide roles')
 
     const notOkRoles: string[] = []
     const ids = roles.map(role => {

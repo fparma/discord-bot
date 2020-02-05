@@ -1,13 +1,13 @@
 import { Message } from 'discord.js'
 import { BotDatabase } from '../bot-database'
 import { Command } from './command'
-import { isMessageInGuildChannel, getMemberFromMessage } from '../util/discord'
+import { isMessageInGuildChannel, getMemberFromMessage, stringToRoles } from '../util/discord'
 import { LoggerFactory } from '../logger'
 import * as Messages from '../messages'
 
 export class RoleCommand implements Command {
   readonly type = '!role'
-  readonly usageInfo = 'Adds whitelist roles. Usage: !role @arma-event @more'
+  readonly usageInfo = 'Adds whitelist roles. Usage: !role arma-event more'
   readonly rateLimit = 0
   readonly onlyMods = false
   private log = LoggerFactory.create(RoleCommand)
@@ -19,7 +19,7 @@ export class RoleCommand implements Command {
       return sendReply('This command has to be used in a public channel')
     }
 
-    const roles = message.mentions.roles
+    const roles = stringToRoles(message.guild, arg.split(' '))
     if (roles.size === 0) return sendReply('Provide roles by @-mentioning them')
 
     const roleIds = roles.map(role => role.id)
