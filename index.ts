@@ -15,6 +15,7 @@ import { EventsAnnouncer } from './lib/events-announcer'
 import { LoggerFactory } from './lib/logger'
 import { RoleCommand } from './lib/commands/add-role'
 import { RemoveRoleCommand } from './lib/commands/remove-role'
+import { RolesCommand } from './lib/commands/roles'
 
 abstract class Bootstrap {
   private static log = LoggerFactory.create(Bootstrap)
@@ -58,6 +59,7 @@ abstract class Bootstrap {
     bot.registerCommand(new DeployedCommand())
     bot.registerCommand(new RoleCommand(botDb))
     bot.registerCommand(new RemoveRoleCommand(botDb))
+    bot.registerCommand(new RolesCommand(botDb))
 
     bot.registerCommand(new AllowRoleCommand(botDb))
     bot.registerCommand(new DisallowRoleCommand(botDb))
