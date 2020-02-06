@@ -1,8 +1,7 @@
-import { Database } from './database'
 import * as Discord from 'discord.js'
-import { LoggerFactory } from './logger'
 import { Command } from './commands/command'
-import { EventsAnnouncer } from './events-announcer'
+import { LoggerFactory } from './logger'
+import { isMessageInGuildChannel, isModerator } from './util/discord'
 
 export class DiscordBot {
   private log = LoggerFactory.create(DiscordBot)
@@ -74,6 +73,8 @@ export class DiscordBot {
     const args = content.slice(content.indexOf(' ')).trim() // remove command type
     const command = this.commands.get(type)
 
+    if (command!.onlyMods && !isModerator(message.member)) return
+
     const { author } = message
     this.log.info(`Running command from ${this.formatAuthor(author)}: ${message.content}`)
     const handleReply = (reply: string | string[]) => this.replyToMessage(reply, message)
@@ -129,8 +130,19 @@ export class DiscordBot {
    * @param message
    */
   private printHelp(message: Discord.Message): void {
+    let isMod = false
+    if (isMessageInGuildChannel(message)) {
+      const member = message.guild.members.get(message.author.id) as Discord.GuildMember
+      isMod = isModerator(member)
+    }
+
     const replies = ['!help - this command']
-    this.commands.forEach((cmd, key) => replies.push(`${key} - ${cmd.usageInfo}`))
+    this.commands.forEach((cmd, key) => {
+      if (!cmd.onlyMods || (cmd.onlyMods && isMod)) {
+        replies.push(`${key} - ${cmd.usageInfo}`)
+      }
+    })
+
     replies.sort((a, b) => a.localeCompare(b))
     this.replyToMessage(replies, message)
   }

@@ -1,7 +1,5 @@
 import * as mongodb from 'mongodb'
 import { LoggerFactory } from './logger'
-import * as Messages from './messages'
-import { EventEmitter } from 'events'
 
 export interface User {
   name: string

@@ -1,16 +1,15 @@
+import { Message } from 'discord.js'
 import { unlink } from 'fs'
 import { basename, join } from 'path'
-import { Message } from 'discord.js'
 import * as rimraf from 'rimraf'
 import * as sanitizeFilename from 'sanitize-filename'
-import { Command } from './command'
-import * as Messages from '../messages'
-import { Database } from './../database'
 import { LoggerFactory } from '../logger'
+import * as Messages from '../messages'
 import { PboDownloader } from '../pbo/pbo-downloader'
 import { PBO_STATES } from '../pbo/pbo-states-enum'
 import { PboTools } from '../pbo/pbo-tools'
 import { PboUploader } from '../pbo/pbo-uploader'
+import { Command } from './command'
 
 // TODO: from legacy. move this into a generic function
 const uploadedThrottle = new Map()
@@ -26,6 +25,7 @@ export class UploadCommand implements Command {
   readonly usageInfo =
     'Uploads a pbo to the server. Usage: !upload (repo) (url) (optional: wanted pbo name. MUST INCLUDE WORLD). Example: !upload main http://www.dl.com/test.pbo tvt30_terry.tanoa'
   readonly rateLimit = 20
+  readonly onlyMods = false
 
   constructor(public readonly tempFolder: string) {}
 
