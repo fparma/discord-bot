@@ -39,6 +39,6 @@ export class EventsAnnouncer {
   private publishEventMessage(events: Event[]) {
     this.log.info(`Publishing ${events.length} new event(s)`)
     const formatted = events.map(evt => Messages.NEW_EVENT(evt.name, evt.authors, evt.permalink)).join('\n')
-    this.channel.send(`${formatted} ${this.role}`)
+    this.channel.send(`${formatted} ${this.role || ''}`.trim())
   }
 }
