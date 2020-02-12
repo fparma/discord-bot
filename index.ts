@@ -4,17 +4,17 @@ import * as mongodb from 'mongodb'
 import * as path from 'path'
 import { DiscordBot } from './lib/bot'
 import { BotDatabase } from './lib/bot-database'
+import { RoleCommand } from './lib/commands/add-role'
 import { AllowRoleCommand } from './lib/commands/allow-role'
 import { DeployedCommand } from './lib/commands/deployed'
 import { DisallowRoleCommand } from './lib/commands/disallow-role'
 import { PingCommand } from './lib/commands/ping'
+import { RemoveRoleCommand } from './lib/commands/remove-role'
 import { StatsCommand } from './lib/commands/stats'
 import { UploadCommand } from './lib/commands/upload'
 import { Database } from './lib/database'
 import { EventsAnnouncer } from './lib/events-announcer'
 import { LoggerFactory } from './lib/logger'
-import { RoleCommand } from './lib/commands/add-role'
-import { RemoveRoleCommand } from './lib/commands/remove-role'
 
 abstract class Bootstrap {
   private static log = LoggerFactory.create(Bootstrap)
@@ -46,10 +46,14 @@ abstract class Bootstrap {
   }
 
   private static setupAnnouncer(db: Database, bot: DiscordBot) {
-    const channel = bot.client.channels.get('258530805138194442')
-    // channels has an incorrect typescript definition
-    const announcer = new EventsAnnouncer(db, channel as any)
-    announcer.pollNewEvents()
+    const channel = bot.client.channels.get('258530805138194442') as Discord.TextChannel
+
+    if (channel && channel.guild) {
+      const role = channel.guild.roles.get('457225971406340097') as Discord.Role
+      // channels has an incorrect typescript definition
+      const announcer = new EventsAnnouncer(db, channel, role)
+      announcer.pollNewEvents()
+    }
   }
 
   private static registerCommands(bot: DiscordBot, db: Database, botDb: BotDatabase) {

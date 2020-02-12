@@ -10,7 +10,7 @@ export class EventsAnnouncer {
   private log = LoggerFactory.create(EventsAnnouncer)
   private static POLL_DELAY = 30 * 1000
 
-  constructor(private db: Database, private channel: Discord.PartialTextBasedChannelFields) {
+  constructor(private db: Database, private channel: Discord.TextChannel, private role: Discord.Role) {
     this.cache = EventsCache.read()
   }
 
@@ -39,6 +39,6 @@ export class EventsAnnouncer {
   private publishEventMessage(events: Event[]) {
     this.log.info(`Publishing ${events.length} new event(s)`)
     const formatted = events.map(evt => Messages.NEW_EVENT(evt.name, evt.authors, evt.permalink)).join('\n')
-    this.channel.send(formatted)
+    this.channel.send(`${formatted} ${this.role}`)
   }
 }
