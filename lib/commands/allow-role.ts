@@ -37,7 +37,7 @@ export class AllowRoleCommand implements Command {
     }
 
     const roles = stringToRoles(message.guild, arg.split(' '))
-    if (roles.size === 0) return sendReply('Please provide roles')
+    if (roles.size === 0) return sendReply('Found no matching roles')
 
     const notOkRoles: string[] = []
     const ids = roles.map(role => {
