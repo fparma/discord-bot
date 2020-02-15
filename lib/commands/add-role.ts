@@ -20,7 +20,7 @@ export class RoleCommand implements Command {
     }
 
     const roles = stringToRoles(message.guild, arg.split(' '))
-    if (roles.size === 0) return sendReply('Provide roles by @-mentioning them')
+    if (roles.size === 0) return sendReply('Found no matching roles')
 
     const roleIds = roles.map(role => role.id)
 
