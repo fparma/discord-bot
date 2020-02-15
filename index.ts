@@ -47,10 +47,13 @@ abstract class Bootstrap {
   }
 
   private static setupAnnouncer(db: Database, bot: DiscordBot) {
-    const channel = bot.client.channels.get('258530805138194442')
-    // channels has an incorrect typescript definition
-    const announcer = new EventsAnnouncer(db, channel as any)
-    announcer.pollNewEvents()
+    const channel = bot.client.channels.get('258530805138194442') as Discord.TextChannel
+
+    if (channel && channel.guild) {
+      const role = channel.guild.roles.get('457225971406340097') as Discord.Role
+      const announcer = new EventsAnnouncer(db, channel, role)
+      announcer.pollNewEvents()
+    }
   }
 
   private static registerCommands(bot: DiscordBot, db: Database, botDb: BotDatabase) {
