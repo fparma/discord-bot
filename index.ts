@@ -50,7 +50,7 @@ abstract class Bootstrap {
     const channel = await bot.client.channels.fetch('258530805138194442') as Discord.TextChannel
 
     if (channel && channel.guild) {
-      const role = channel.guild.roles.resolve('457225971406340097') as Discord.Role
+      const role = await channel.guild.roles.fetch('457225971406340097') as Discord.Role
       const announcer = new EventsAnnouncer(db, channel, role)
       announcer.pollNewEvents()
     }
