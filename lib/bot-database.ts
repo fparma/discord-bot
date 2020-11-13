@@ -32,7 +32,7 @@ export class BotDatabase {
   }
 
   saveUserRoles(roles: string[]) {
-    this.db!.collection('config').updateOne(
+    return this.db!.collection('config').updateOne(
       { id: BotDatabase.ROLE_KEY },
       {
         $addToSet: { roles: { $each: roles } },
@@ -42,7 +42,7 @@ export class BotDatabase {
   }
 
   removeUserRoles(roles: string[]) {
-    this.db!.collection('config').updateOne(
+    return this.db!.collection('config').updateOne(
       { id: BotDatabase.ROLE_KEY },
       {
         $pull: { roles: { $in: roles } },

@@ -1,4 +1,4 @@
-import { Message } from 'discord.js'
+import { Guild, Message } from 'discord.js'
 import { BotDatabase } from '../bot-database'
 import { Command } from './command'
 import { isMessageInGuildChannel, getMemberFromMessage, stringToRoles } from '../util/discord'
@@ -19,7 +19,7 @@ export class RemoveRoleCommand implements Command {
       return sendReply('This command has to be used in a public channel')
     }
 
-    const roles = stringToRoles(message.guild, arg.split(' '))
+    const roles = await stringToRoles(message.guild as Guild, arg.split(' '))
     if (roles.size === 0) return sendReply('Found no matching roles')
     const roleIds = roles.map(role => role.id)
 
@@ -38,13 +38,15 @@ export class RemoveRoleCommand implements Command {
         return sendReply('One or more of the provided roles are not whitelisted')
       }
 
-      const member = getMemberFromMessage(message)
-      const assignable = roleIds.filter(role => member.roles.has(role))
+      const member = await getMemberFromMessage(message)
+      if (!member) return
+
+      const assignable = roleIds.filter(role => member.roles.cache.has(role))
       this.log.info('removing roles to user', message.author.username, assignable)
 
       if (assignable.length === 0) return
 
-      await member.removeRoles(assignable)
+      await member.roles.remove(assignable)
       await message.react('✅')
     } catch (err) {
       this.log.error(err)

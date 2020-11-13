@@ -1,4 +1,4 @@
-import { Message, PermissionResolvable } from 'discord.js'
+import { Guild, Message, PermissionResolvable } from 'discord.js'
 import { BotDatabase } from '../bot-database'
 import { LoggerFactory } from '../logger'
 import * as Messages from '../messages'
@@ -17,7 +17,6 @@ const INVALID_PERMISSION_ROLE: PermissionResolvable[] = [
   'CHANGE_NICKNAME',
   'MANAGE_NICKNAMES',
   'MANAGE_ROLES',
-  'MANAGE_ROLES_OR_PERMISSIONS',
   'MANAGE_WEBHOOKS',
   'MANAGE_EMOJIS',
 ]
@@ -36,12 +35,12 @@ export class AllowRoleCommand implements Command {
       return sendReply('This command can only be used in a guild channel')
     }
 
-    const roles = stringToRoles(message.guild, arg.split(' '))
+    const roles = await stringToRoles(message.guild as Guild, arg.split(' '))
     if (roles.size === 0) return sendReply('Found no matching roles')
 
     const notOkRoles: string[] = []
     const ids = roles.map(role => {
-      if (INVALID_PERMISSION_ROLE.some(permission => role.hasPermission(permission))) {
+      if (INVALID_PERMISSION_ROLE.some(permission => role.permissions.has(permission))) {
         notOkRoles.push(role.name)
       }
       return role.id

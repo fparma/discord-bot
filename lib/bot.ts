@@ -18,7 +18,7 @@ export class DiscordBot {
     if (!token) throw new Error('Invalid token')
 
     this.client.once('ready', () => {
-      this.log.info(`Connected to discord as "${this.user.username}"`)
+      this.log.info(`Connected to discord as "${this.user?.username}"`)
       this.client.on('message', msg => (isProd ? this.onMessage(msg) : this.handleDevelopmentMessage(msg)))
     })
 
@@ -69,10 +69,10 @@ export class DiscordBot {
    * @param content
    * @param message
    */
-  private handleExistingCommand(type: string, content: string = '', message: Discord.Message): void {
+  private async handleExistingCommand(type: string, content: string = '', message: Discord.Message): Promise<void> {
     const args = content.slice(content.indexOf(' ')).trim() // remove command type
     const command = this.commands.get(type)
-
+ 
     if (command!.onlyMods && !isModerator(message.member)) return
 
     const { author } = message
@@ -131,9 +131,8 @@ export class DiscordBot {
    */
   private printHelp(message: Discord.Message): void {
     let isMod = false
-    if (isMessageInGuildChannel(message)) {
-      const member = message.guild.members.get(message.author.id) as Discord.GuildMember
-      isMod = isModerator(member)
+    if (isMessageInGuildChannel(message)) { 
+      isMod = isModerator(message.member)
     }
 
     const replies = ['!help - this command']
