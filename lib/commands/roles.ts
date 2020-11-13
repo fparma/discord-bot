@@ -1,4 +1,4 @@
-import { Message } from 'discord.js'
+import { Guild, Message } from 'discord.js'
 import { Database } from './../database'
 import { Command } from './command'
 import { BotDatabase } from '../bot-database'
@@ -20,10 +20,12 @@ export class RolesCommand implements Command {
       return sendReply('This command can only be used in a guild channel')
     }
 
+    const guild = message.guild as Guild
+
     try {
       message.channel.startTyping()
       const available = await this.db.getUserRoles()
-      const roles = message.guild.roles
+      const roles = guild.roles.cache
         .filter(role => {
           return available.includes(role.id)
         })

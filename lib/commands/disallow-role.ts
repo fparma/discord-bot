@@ -1,4 +1,4 @@
-import { Message } from 'discord.js'
+import { Guild, Message } from 'discord.js'
 import { BotDatabase } from '../bot-database'
 import { LoggerFactory } from '../logger'
 import * as Messages from '../messages'
@@ -19,7 +19,7 @@ export class DisallowRoleCommand implements Command {
       return sendReply('This command can only be used in a guild channel')
     }
 
-    const roles = stringToRoles(message.guild, arg.split(' '))
+    const roles = await stringToRoles(message.guild as Guild, arg.split(' '))
     if (roles.size === 0) return sendReply('Found no matching roles')
 
     const ids = roles.map(role => role.id)

@@ -46,11 +46,11 @@ abstract class Bootstrap {
     this.log.info('Started')
   }
 
-  private static setupAnnouncer(db: Database, bot: DiscordBot) {
-    const channel = bot.client.channels.get('258530805138194442') as Discord.TextChannel
+  private static async setupAnnouncer(db: Database, bot: DiscordBot) {
+    const channel = await bot.client.channels.fetch('258530805138194442') as Discord.TextChannel
 
     if (channel && channel.guild) {
-      const role = channel.guild.roles.get('457225971406340097') as Discord.Role
+      const role = await channel.guild.roles.fetch('457225971406340097') as Discord.Role
       const announcer = new EventsAnnouncer(db, channel, role)
       announcer.pollNewEvents()
     }
