@@ -5,7 +5,7 @@ import { LoggerFactory } from '../logger'
 import { PBO_STATES } from './pbo-states-enum'
 
 export abstract class PboDownloader {
-  static MAX_FILESIZE = 10485760 // 10mb
+  static MAX_FILESIZE = 30 * Math.pow(1024, 2)
   private static log = LoggerFactory.create(PboDownloader)
 
   static checkUrl(url: string): boolean {
