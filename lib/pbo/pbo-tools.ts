@@ -7,6 +7,8 @@ interface LintError extends Error {
   code: number
 }
 
+const isPboError = (e: Error): e is LintError => 'code' in e
+
 export abstract class PboTools {
   private static log = LoggerFactory.create(PboTools)
 
@@ -24,8 +26,8 @@ export abstract class PboTools {
 
   static lintPboFolder(folderPath: string) {
     this.log.debug(folderPath)
-    return new Promise((resolve, reject) => {
-      fs.access(path.join(folderPath, 'mission.sqm'), fs.constants.R_OK, err => {
+    return new Promise<void>((resolve, reject) => {
+      fs.access(path.join(folderPath, 'mission.sqm'), fs.constants.R_OK, (err) => {
         if (err) {
           if (err.code === 'ENOENT') {
             return reject('Failure, pbo seems to be missing a mission.sqm')
@@ -38,25 +40,33 @@ export abstract class PboTools {
         exec(command, (err, stdout, stderr) => {
           if (!err) return resolve()
 
-          const lintMessages = PboTools.getLintErrors(err as LintError, stdout, folderPath)
+          const msg = [folderPath, stdout, stderr].join(' - ')
+          if (!isPboError(err)) {
+            return reject(new Error(`Makepbo fail ${err.message} ${msg}`))
+          }
+
+          if (err.code === 13) {
+            return reject('makepbo fail - detected unbinarised p3d(s)')
+          }
+
+          const lintMessages = PboTools.getLintErrors(err, stdout, folderPath)
           if (lintMessages) return reject(lintMessages)
 
-          const msg = [folderPath, stdout, stderr].join(' - ')
-          return reject(new Error(`Makepbo fail ${(err as LintError).code} ${msg}`))
+          return reject(new Error(`Makepbo fail ${err.code} ${msg}`))
         })
       })
     })
   }
 
   private static getLintErrors(err: LintError, stdout: string, folderPath: string) {
-    const { code = -1 } = err
+    const { code } = err
     // previously the exit was 87 for lint errors, now it's 17?
     if (![17, 87].includes(code)) return null
 
     const errors = stdout
       .split(/\r?\n/)
-      .filter(str => str.includes(folderPath))
-      .map(str => str.replace(folderPath, '').trim())
+      .filter((str) => str.includes(folderPath))
+      .map((str) => str.replace(folderPath, '').trim())
       .join('\n')
     return errors
   }
