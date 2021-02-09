@@ -55,12 +55,14 @@ abstract class Bootstrap {
 
     const update = async () => {
       const status = await serverStatus.getStatus()
-      bot.client.user?.setPresence({
-        activity: {
-          type: status.active ? 'PLAYING' : 'LISTENING',
-          name: status.text,
-        },
-      })
+      bot.client.user
+        ?.setPresence({
+          activity: {
+            type: status.active ? 'PLAYING' : 'LISTENING',
+            name: status.text,
+          },
+        })
+        .catch((err) => this.log.error('Failed to set presence', err))
     }
 
     update()
