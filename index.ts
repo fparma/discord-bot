@@ -16,6 +16,7 @@ import { LoggerFactory } from './lib/logger'
 import { RoleCommand } from './lib/commands/add-role'
 import { RemoveRoleCommand } from './lib/commands/remove-role'
 import { RolesCommand } from './lib/commands/roles'
+import { ServerStatus } from './lib/server-status'
 
 abstract class Bootstrap {
   private static log = LoggerFactory.create(Bootstrap)
@@ -40,16 +41,37 @@ abstract class Bootstrap {
       process.exit(1)
     }
 
+    this.setupServerStatus(bot)
+
     if (isProd) {
       this.setupAnnouncer(db, bot)
     }
+
     this.log.info('Started')
   }
 
+  private static async setupServerStatus(bot: DiscordBot) {
+    const serverStatus = new ServerStatus()
+
+    const update = async () => {
+      const status = await serverStatus.getStatus()
+      bot.client.user?.setPresence({
+        activity: {
+          type: status.active ? 'PLAYING' : 'LISTENING',
+          name: status.text,
+        },
+      })
+    }
+
+    update()
+    setInterval(update, 15 * 1000)
+  }
+
   private static async setupAnnouncer(db: Database, bot: DiscordBot) {
-    const channel = await bot.client.channels.fetch('258530805138194442') as Discord.TextChannel
+    const channel = (await bot.client.channels.fetch('258530805138194442')) as Discord.TextChannel
 
     if (channel && channel.guild) {
+<<<<<<< 97db808000d2e09211b752b648b2557ddd883350
 <<<<<<< dcf1ffa29611f51f97800b14a0c3cd454d9e0c5c
 <<<<<<< a9650a8c665f5b807f6579e4e9b998672f649195
       const role = await channel.guild.roles.fetch('457225971406340097') as Discord.Role
@@ -59,6 +81,9 @@ abstract class Bootstrap {
 =======
       const role = await channel.guild.roles.fetch('457225971406340097') as Discord.Role
 >>>>>>> fetch over resolve
+=======
+      const role = (await channel.guild.roles.fetch('457225971406340097')) as Discord.Role
+>>>>>>> add server query
       const announcer = new EventsAnnouncer(db, channel, role)
       announcer.pollNewEvents()
     }
@@ -76,7 +101,7 @@ abstract class Bootstrap {
     bot.registerCommand(new DisallowRoleCommand(botDb))
 
     const tempFolder = path.join(__dirname, 'temp')
-    fs.mkdir(tempFolder, err => {
+    fs.mkdir(tempFolder, (err) => {
       if (err && err.code !== 'EEXIST') {
         this.log.fatal('Failed to create temp folder')
         throw err
@@ -90,7 +115,7 @@ abstract class Bootstrap {
 Bootstrap.init()
 
 // Exit on unhandled rejections
-process.on('unhandledRejection', error => {
+process.on('unhandledRejection', (error) => {
   console.error('Exiting due to unhandled promise rejection', error)
   process.exit(1)
 })
