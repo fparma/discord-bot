@@ -11,8 +11,10 @@
   "author": "Cuel",
   "license": "ISC",
   "dependencies": {
+    "@types/gamedig": "^2.0.1",
     "discord.js": "^12.4.1",
     "dotenv": "^4.0.0",
+    "gamedig": "^2.0.25",
     "mongodb": "^2.2.36",
     "needle": "^2.5.2",
     "rimraf": "^2.6.1",
