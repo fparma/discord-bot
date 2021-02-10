@@ -1,7 +1,16 @@
-import { query } from 'gamedig'
+import { query,QueryResult } from 'gamedig'
 import { LoggerFactory } from './logger'
+import { SftpHandler } from './util/sftp'
 
 const SEPARATOR = '·'
+
+type Ts3Channel = { channel_name: string; cid: string; pid: string }
+
+interface Ts3QueryResult extends QueryResult {
+  raw: {
+    channels: Ts3Channel[]
+  }
+}
 
 export class ServerStatus {
   private log = LoggerFactory.create(ServerStatus)
@@ -9,7 +18,7 @@ export class ServerStatus {
   public async getStatus() {
     const [server, ts3] = await Promise.all([this.getServerStatus(), this.getTs3Status()])
     this.log.info({ server: server.text, ts3: ts3.text })
-    
+
     return {
       active: server.active,
       text: `${server.text} ${SEPARATOR} ${ts3.text}`,
@@ -40,7 +49,7 @@ export class ServerStatus {
         host: 'thor.prfn.se',
       })
 
-      const ret = this.parseTs3State(state)
+      const ret = this.parseTs3State(state as Ts3QueryResult)
       return ret ? { active: true, text: ret } : { active: false, text: 'TS3: N/A' }
     } catch (err) {
       this.log.error(err)
@@ -48,9 +57,9 @@ export class ServerStatus {
     }
   }
 
-  private parseTs3State(state: any): string | null {
+  private parseTs3State(state: Ts3QueryResult): string | null {
     const rawChannels = state.raw.channels
-    const root = rawChannels.find((channel: any) => channel.channel_name === 'FPARMA 3' || channel.cid === '979')
+    const root = rawChannels.find((channel) => channel.channel_name === 'FPARMA 3' || channel.cid === '979')
     if (!root || !root.cid) {
       this.log.warn('Could not find root TS3 channel')
       return null
@@ -58,15 +67,15 @@ export class ServerStatus {
 
     const channelIds = [root.cid]
     const subChannelsIds = rawChannels.reduce(
-      (acc: string[], ele: any) => (ele.pid === root.cid ? [...acc, ele.cid] : acc),
+      (acc: string[], ele) => (ele.pid === root.cid ? [...acc, ele.cid] : acc),
       []
     )
 
     const recurseSubChannelChildren = (id: string) => {
       channelIds.push(id)
       rawChannels
-        .filter((channel: any) => channel.pid === id)
-        .forEach((channel: any) => recurseSubChannelChildren(channel.cid))
+        .filter((channel) => channel.pid === id)
+        .forEach((channel) => recurseSubChannelChildren(channel.cid))
     }
     subChannelsIds.forEach(recurseSubChannelChildren)
 
