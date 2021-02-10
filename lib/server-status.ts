@@ -17,7 +17,6 @@ export class ServerStatus {
 
   public async getStatus() {
     const [server, ts3] = await Promise.all([this.getServerStatus(), this.getTs3Status()])
-    this.log.info({ server: server.text, ts3: ts3.text })
 
     return {
       active: server.active,
@@ -29,7 +28,8 @@ export class ServerStatus {
     try {
       const { raw = {} as any, map = '', maxplayers, players } = await query({
         type: 'arma3',
-        host: 'fparma.com',
+        host: process.env.A3_SERVER_URL || '',
+        socketTimeout: 5000,
       })
       if (players.length > 0) {
         return { active: true, text: `[${players.length}/${maxplayers}] ${raw.game} (${map})` }
