@@ -16,6 +16,7 @@ import { LoggerFactory } from './lib/logger'
 import { RoleCommand } from './lib/commands/add-role'
 import { RemoveRoleCommand } from './lib/commands/remove-role'
 import { RolesCommand } from './lib/commands/roles'
+import { ServerStatus } from './lib/server-status'
 
 abstract class Bootstrap {
   private static log = LoggerFactory.create(Bootstrap)
@@ -40,6 +41,8 @@ abstract class Bootstrap {
       process.exit(1)
     }
 
+    this.setupServerStatus(bot)
+
     if (isProd) {
       this.setupAnnouncer(db, bot)
     }
@@ -47,13 +50,32 @@ abstract class Bootstrap {
   }
 
   private static async setupAnnouncer(db: Database, bot: DiscordBot) {
-    const channel = await bot.client.channels.fetch('258530805138194442') as Discord.TextChannel
+    const channel = (await bot.client.channels.fetch('258530805138194442')) as Discord.TextChannel
 
     if (channel && channel.guild) {
-      const role = await channel.guild.roles.fetch('457225971406340097') as Discord.Role
+      const role = (await channel.guild.roles.fetch('457225971406340097')) as Discord.Role
       const announcer = new EventsAnnouncer(db, channel, role)
       announcer.pollNewEvents()
     }
+  }
+
+  private static async setupServerStatus(bot: DiscordBot) {
+    const serverStatus = new ServerStatus()
+
+    const update = async () => {
+      const status = await serverStatus.getStatus()
+      bot.client.user
+        ?.setPresence({
+          activity: {
+            type: status.active ? 'PLAYING' : 'LISTENING',
+            name: status.text,
+          },
+        })
+        .catch((err) => this.log.error('Failed to set presence', err))
+    }
+
+    update()
+    setInterval(update, 15 * 1000)
   }
 
   private static registerCommands(bot: DiscordBot, db: Database, botDb: BotDatabase) {
@@ -68,7 +90,7 @@ abstract class Bootstrap {
     bot.registerCommand(new DisallowRoleCommand(botDb))
 
     const tempFolder = path.join(__dirname, 'temp')
-    fs.mkdir(tempFolder, err => {
+    fs.mkdir(tempFolder, (err) => {
       if (err && err.code !== 'EEXIST') {
         this.log.fatal('Failed to create temp folder')
         throw err
@@ -82,7 +104,7 @@ abstract class Bootstrap {
 Bootstrap.init()
 
 // Exit on unhandled rejections
-process.on('unhandledRejection', error => {
+process.on('unhandledRejection', (error) => {
   console.error('Exiting due to unhandled promise rejection', error)
   process.exit(1)
 })
