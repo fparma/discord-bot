@@ -23,7 +23,7 @@ export class UploadCommand implements Command {
   private log = LoggerFactory.create(UploadCommand)
   readonly type = '!upload'
   readonly usageInfo =
-    'Uploads a pbo to the server. Usage: !upload (repo) (url) (optional: wanted pbo name. MUST INCLUDE WORLD). Example: !upload main http://www.dl.com/test.pbo tvt30_terry.tanoa'
+    'Uploads a pbo to the server. Usage: !upload (repo) (url) (optional: wanted pbo name. MUST INCLUDE WORLD). Example: !upload main http://www.domain.invalid/test.pbo tvt30_terry.tanoa'
   readonly rateLimit = 20
   readonly onlyMods = false
 
