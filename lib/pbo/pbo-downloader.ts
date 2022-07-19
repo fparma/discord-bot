@@ -25,7 +25,7 @@ export abstract class PboDownloader {
 
   static download(url: string, filePath: string): Promise<PBO_STATES> {
     this.log.info('Downloading file', url)
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       const stream = needle.get(url)
       let totalSize = 0
 
@@ -38,7 +38,7 @@ export abstract class PboDownloader {
         }
       })
 
-      stream.on('end', err => {
+      stream.on('end', (err) => {
         if (err) {
           this.log.warn('Download interrupted', url, err)
           return resolve(PBO_STATES.DOWNLOAD_BAD_HOST)
@@ -55,9 +55,9 @@ export abstract class PboDownloader {
     const { statusCode = 500, headers } = response
     if (+statusCode >= 400) return PBO_STATES.DOWNLOAD_BAD_STATUS_CODE
 
-    const length = headers ? +headers['content-length'] : null
+    const length = headers ? headers['content-length'] : null
     if (!length) return PBO_STATES.DOWNLOAD_BAD_HOST
-    if (length > PboDownloader.MAX_FILESIZE) return PBO_STATES.DOWNLOAD_FILE_TOO_LARGE
+    if (+length > PboDownloader.MAX_FILESIZE) return PBO_STATES.DOWNLOAD_FILE_TOO_LARGE
 
     const type = headers ? headers['content-type'] : null
     // we could check for application/octet-stream here but there's no garantuee that'll be sent back

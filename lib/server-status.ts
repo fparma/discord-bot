@@ -26,18 +26,25 @@ export class ServerStatus {
 
   private async getServerStatus() {
     try {
-      const { raw = {} as any, map = '', maxplayers, players } = await query({
+      const {
+        raw = {} as any,
+        map = '',
+        maxplayers,
+        players,
+      } = await query({
         type: 'arma3',
         host: process.env.A3_SERVER_URL || '',
         socketTimeout: 5000,
       })
+
       if (players.length > 0) {
         return { active: true, text: `[${players.length}/${maxplayers}] ${raw.game} (${map})` }
       } else {
         return { active: false, text: 'Server: waiting' }
       }
     } catch (err) {
-      this.log.error(err)
+      // spams quite a bit
+      this.log.debug(err)
       return { active: false, text: 'Server: N/A' }
     }
   }

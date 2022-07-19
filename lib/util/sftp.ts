@@ -18,20 +18,23 @@ export abstract class SftpHandler {
       this.log.debug('Sftp connected')
       return sftp
     } catch (err) {
-      sftp.end()
+      sftp.end().catch(() => {})
       this.log.error('Connection error', err)
       throw err
     }
   }
 
-  static async getLastDeploy(sftp: SftpClient.Client) {
-    const stream = await sftp.get(String(process.env.FTP_DEPLOYED_REPO_INFO))
+  static async getLastDeploy(sftp: SftpClient) {
+    const fileExist = await sftp.exists(String(process.env.FTP_DEPLOYED_REPO_INFO))
+    if (!fileExist) throw new Error('Could not find deploy file')
+
+    const stream = sftp.createReadStream(String(process.env.FTP_DEPLOYED_REPO_INFO))
 
     return new Promise((resolve, reject) => {
       let str = ''
-      stream.on('data', chunck => (str += chunck.toString()))
-      stream.on('error', err => stream.emit('end', err))
-      stream.on('end', err => {
+      stream.on('data', (chunck: any) => (str += chunck.toString()))
+      stream.on('error', (err: Error) => stream.emit('end', err))
+      stream.on('end', (err: Error) => {
         if (err) {
           this.log.error('Failed to download last deploy info')
           return reject(err)

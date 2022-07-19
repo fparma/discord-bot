@@ -14,15 +14,15 @@ export class DiscordBot {
    * Connect the bot using provided token
    * @param token
    */
-  async connect(token: string = '', isProd: boolean) {
+  async connect(token: string = '', isProd: boolean = false) {
     if (!token) throw new Error('Invalid token')
 
     this.client.once('ready', () => {
       this.log.info(`Connected to discord as "${this.user?.username}"`)
-      this.client.on('message', msg => (isProd ? this.onMessage(msg) : this.handleDevelopmentMessage(msg)))
+      this.client.on('message', (msg) => (isProd ? this.onMessage(msg) : this.handleDevelopmentMessage(msg)))
     })
 
-    this.client.on('disconnect', err => {
+    this.client.on('disconnect', (err) => {
       this.log.fatal('Websocket disconnected', err)
       throw err
     })
@@ -72,7 +72,7 @@ export class DiscordBot {
   private async handleExistingCommand(type: string, content: string = '', message: Discord.Message): Promise<void> {
     const args = content.slice(content.indexOf(' ')).trim() // remove command type
     const command = this.commands.get(type)
- 
+
     if (command!.onlyMods && !isModerator(message.member)) return
 
     const { author } = message
@@ -131,7 +131,7 @@ export class DiscordBot {
    */
   private printHelp(message: Discord.Message): void {
     let isMod = false
-    if (isMessageInGuildChannel(message)) { 
+    if (isMessageInGuildChannel(message)) {
       isMod = isModerator(message.member)
     }
 

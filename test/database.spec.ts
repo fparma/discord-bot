@@ -15,7 +15,7 @@ describe(DiscordBot.name, () => {
     db = new Database(mongo)
   })
 
-  it('connects', async done => {
+  it('connects', async (done) => {
     const url = 'test://'
     spyOn(mongo, 'connect').and.callFake((providedUrl: string, opts: object, callback: Function) => {
       expect(url).toEqual(providedUrl)
@@ -39,7 +39,7 @@ describe(DiscordBot.name, () => {
       await db.connect(url)
       fail('should not be reached')
     } catch (e) {
-      expect(expectedError).toEqual(e)
+      expect(expectedError).toEqual(e as any)
     }
   })
 })

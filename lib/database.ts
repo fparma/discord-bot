@@ -37,14 +37,16 @@ export class Database {
     })
   }
 
-  findOneUser(userNameOrSteamId: string): Promise<User> {
+  async findOneUser(userNameOrSteamId: string): Promise<User | null> {
     const userQuery = { $or: [{ name: userNameOrSteamId }, { steam_id: userNameOrSteamId }] }
-    return this.db!.collection('users').findOne(userQuery)
+    if (!this.db) return null
+    return this.db.collection('users').findOne(userQuery)
   }
 
-  countUserAttendance(userSteamid: string): Promise<number> {
+  async countUserAttendance(userSteamid: string): Promise<number | 0> {
     const groupQuery = { 'units.user_id': { $in: [userSteamid] } }
-    return this.db!.collection('groups').count(groupQuery)
+    if (!this.db) return 0
+    return this.db.collection('groups').count(groupQuery)
   }
 
   async findFutureEvents(): Promise<Event[]> {
@@ -54,7 +56,7 @@ export class Database {
 
     try {
       const res = await collection.find(query, options).toArray()
-      const events = res.map(evt => {
+      const events = res.map((evt) => {
         return {
           id: evt._id,
           name: evt.name,

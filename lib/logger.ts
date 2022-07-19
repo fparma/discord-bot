@@ -1,5 +1,5 @@
 enum Level {
-  OFF,
+  OFF = -1,
   DEBUG,
   INFO,
   WARN,
@@ -17,7 +17,7 @@ class Logger {
   constructor(fn: Function, level: Level = -1) {
     this.name = fn.name
     const env = process.env.NODE_ENV || 'development'
-    this.level = level !== -1 ? level : env === 'production' ? Level.INFO : Level.DEBUG
+    this.level = level !== Level.OFF ? level : env === 'production' ? Level.INFO : Level.DEBUG
   }
 
   private canLog(level: Level) {
