@@ -181,20 +181,12 @@ export class DiscordBot {
         embed.setTitle('NO AUDIT LOGS, unclear what happened')
       } else {
         const { executor, target } = logEntry
-        if (target.id === prev.author.id) {
-          embed.setTitle(
-            `${executor ? executor.tag : '<UNKNOWN>'} deleted ${prev.author.tag}'s message in #${
-              (prev.channel as Discord.GuildChannel).name
-            }`
-          )
-        } else {
-          // There can be a delay between message delete and audit log entry, so we can only assume
-          embed.setTitle(
-            `Assumption: ${prev.author.tag} deleted their own message in #${
-              (prev.channel as Discord.GuildChannel).name
-            }`
-          )
-        }
+        const title =
+          target.id === prev.author.id
+            ? `${executor ? executor.tag : '<UNKNOWN>'} deleted ${prev.author.tag}'s`
+            : `Assumption: ${prev.author.tag} deleted their own`
+
+        embed.setTitle(`${title} message in #${(prev.channel as Discord.GuildChannel).name}`)
       }
     }
 
