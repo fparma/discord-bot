@@ -5,15 +5,16 @@
   "scripts": {
     "test": "yarn check:types && jasmine-ts \"./test/**/*.spec.ts\"",
     "test-watch": "chokidar -p './test/**/*' -c 'npm run test'",
-    "start": "node -r ts-node/register -r dotenv/config index.ts",
+    "start": "node -r @swc-node/register -r dotenv/config index.ts",
     "setup-db": "docker run -d -p 27017-27019:27017-27019 --name mongodb mongo:3.6.12",
     "check:types": "tsc --noEmit"
   },
   "author": "Cuel",
   "license": "ISC",
   "dependencies": {
+    "@swc-node/register": "^1.5.1",
     "@types/gamedig": "^2.0.1",
-    "discord.js": "12.4.1",
+    "discord.js": "14.3.0",
     "dotenv": "^4.0.0",
     "gamedig": "^2.0.25",
     "mongodb": "^2.2.36",
@@ -21,7 +22,6 @@
     "rimraf": "^2.6.1",
     "sanitize-filename": "^1.6.1",
     "ssh2-sftp-client": "^9.0.2",
-    "ts-node": "^3.3.0",
     "typescript": "^4.0.5"
   },
   "devDependencies": {

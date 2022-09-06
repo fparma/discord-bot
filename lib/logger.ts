@@ -14,10 +14,10 @@ class Logger {
   level: Level
   private name: string
 
-  constructor(fn: Function, level: Level = -1) {
+  constructor(fn: Function, level: Level) {
     this.name = fn.name
     const env = process.env.NODE_ENV || 'development'
-    this.level = level !== Level.OFF ? level : env === 'production' ? Level.INFO : Level.DEBUG
+    this.level = level ? level : env === 'production' ? Level.INFO : Level.DEBUG
   }
 
   private canLog(level: Level) {
