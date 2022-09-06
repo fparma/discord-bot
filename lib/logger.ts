@@ -30,31 +30,35 @@ class Logger {
 
   debug(...args: any[]): void {
     if (!this.canLog(Level.DEBUG)) return
-    args.unshift(this.details('debug'))
-    console.debug.apply(console, args)
+    const toLog = [...args]
+    toLog.unshift(this.details('debug'))
+    console.debug.apply(console, toLog)
   }
 
   info(...args: any[]): void {
     if (!this.canLog(Level.INFO)) return
-    args.unshift(this.details('info'))
-    console.info.apply(console, args)
+    const toLog = [...args]
+    toLog.unshift(this.details('info'))
+    console.info.apply(console, toLog)
   }
 
   warn(...args: any[]): void {
     if (!this.canLog(Level.WARN)) return
-    args.unshift(this.details('warn'))
-    console.warn.apply(console, args)
+    const toLog = [...args]
+    toLog.unshift(this.details('warn'))
+    console.warn.apply(console, toLog)
   }
 
   error(...args: any[]): void {
-    if (!this.canLog(Level.INFO)) return
-    args.unshift(this.details('error'))
-    console.error.apply(console, args)
+    const toLog = [...args]
+    toLog.unshift(this.details('error'))
+    console.error.apply(console, toLog)
   }
 
   fatal(...args: any[]): void {
-    args.unshift(this.details('fatal'))
-    console.error.apply(console, args)
+    const toLog = [...args]
+    toLog.unshift(this.details('fatal'))
+    console.error.apply(console, toLog)
   }
 }
 
