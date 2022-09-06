@@ -6,19 +6,19 @@ import { isMessageInGuildChannel, stringToRoles } from '../util/discord'
 import { Command } from './command'
 
 const INVALID_PERMISSION_ROLE: PermissionResolvable[] = [
-  'ADMINISTRATOR',
-  'KICK_MEMBERS',
-  'BAN_MEMBERS',
-  'MANAGE_CHANNELS',
-  'MANAGE_GUILD',
-  'VIEW_AUDIT_LOG',
-  'MANAGE_MESSAGES',
-  'MENTION_EVERYONE',
-  'CHANGE_NICKNAME',
-  'MANAGE_NICKNAMES',
-  'MANAGE_ROLES',
-  'MANAGE_WEBHOOKS',
-  'MANAGE_EMOJIS',
+  'Administrator',
+  'KickMembers',
+  'BanMembers',
+  'ManageChannels',
+  'ManageGuild',
+  'ViewAuditLog',
+  'ManageMessages',
+  'MentionEveryone',
+  'ChangeNickname',
+  'ManageNicknames',
+  'ManageRoles',
+  'ManageWebhooks',
+  'ManageMessages',
 ]
 
 export class AllowRoleCommand implements Command {
@@ -39,8 +39,8 @@ export class AllowRoleCommand implements Command {
     if (roles.size === 0) return sendReply('Found no matching roles')
 
     const notOkRoles: string[] = []
-    const ids = roles.map(role => {
-      if (INVALID_PERMISSION_ROLE.some(permission => role.permissions.has(permission))) {
+    const ids = roles.map((role) => {
+      if (INVALID_PERMISSION_ROLE.some((permission) => role.permissions.has(permission))) {
         notOkRoles.push(role.name)
       }
       return role.id
@@ -56,7 +56,7 @@ export class AllowRoleCommand implements Command {
     try {
       this.log.info('Saving user roles', { author: message.author.username + '_' + message.author.id }, ids)
       await this.db.saveUserRoles(ids)
-      await message.react('✅')
+      await message.react(Messages.CHECK_MARK)
     } catch (err) {
       this.log.error('Failed to save user roles', err)
       return sendReply(Messages.UNKNOWN_ERROR)

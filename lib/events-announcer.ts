@@ -24,21 +24,21 @@ export class EventsAnnouncer {
 
   private async poll() {
     const events = await this.db.findFutureEvents()
-    const newEvents = events.filter(evt => !this.cache.hasOwnProperty(evt.id))
+    const newEvents = events.filter((evt) => !this.cache.hasOwnProperty(evt.id))
     if (!newEvents.length) return
 
-    this.saveToCache(newEvents.map(evt => evt.id))
+    this.saveToCache(newEvents.map((evt) => evt.id))
     this.publishEventMessage(newEvents)
   }
 
   private saveToCache(ids: string[]) {
-    ids.forEach(id => (this.cache[id] = null))
+    ids.forEach((id) => (this.cache[id] = null))
     EventsCache.write(Object.assign({}, this.cache))
   }
 
   private publishEventMessage(events: Event[]) {
     this.log.info(`Publishing ${events.length} new event(s)`)
-    const formatted = events.map(evt => Messages.NEW_EVENT(evt.name, evt.authors, evt.permalink)).join('\n')
+    const formatted = events.map((evt) => Messages.NEW_EVENT(evt.name, evt.authors, evt.permalink)).join('\n')
     this.channel.send(`${formatted} ${this.role || ''}`.trim())
   }
 }

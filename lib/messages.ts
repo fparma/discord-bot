@@ -39,3 +39,5 @@ export const pboStateToReply = (state: PBO_STATES): string => {
 }
 
 export const CURRENTLY_DEPLOYED = (repo: string) => `The currently deployed repo seems to be ${repo}`
+
+export const CHECK_MARK = '✅'

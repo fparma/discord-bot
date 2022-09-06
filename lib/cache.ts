@@ -19,7 +19,7 @@ export abstract class EventsCache {
   }
 
   static write(cache: Cache) {
-    writeFile(resolve(__dirname, '..', 'cache.json'), JSON.stringify(cache), e => {
+    writeFile(resolve(__dirname, '..', 'cache.json'), JSON.stringify(cache), (e) => {
       if (e) this.log.fatal('Failed to write cache file', e)
     })
   }

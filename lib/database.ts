@@ -37,10 +37,9 @@ export class Database {
     })
   }
 
-  async findOneUser(userNameOrSteamId: string): Promise<User | null> {
+  findOneUser(userNameOrSteamId: string): Promise<User | null> {
     const userQuery = { $or: [{ name: userNameOrSteamId }, { steam_id: userNameOrSteamId }] }
-    if (!this.db) return null
-    return this.db.collection('users').findOne(userQuery)
+    return this.db!.collection('users').findOne(userQuery)
   }
 
   async countUserAttendance(userSteamid: string): Promise<number | 0> {

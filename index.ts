@@ -27,7 +27,18 @@ abstract class Bootstrap {
 
     const db = new Database(new mongodb.MongoClient())
     const botDb = new BotDatabase(new mongodb.MongoClient())
-    const bot = new DiscordBot(new Discord.Client())
+
+    const bot = new DiscordBot(
+      new Discord.Client({
+        intents: [
+          Discord.GatewayIntentBits.Guilds,
+          Discord.GatewayIntentBits.GuildMessages,
+          Discord.GatewayIntentBits.MessageContent,
+          Discord.GatewayIntentBits.GuildMembers,
+        ],
+      })
+    )
+
     this.registerCommands(bot, db, botDb)
 
     try {
@@ -64,14 +75,14 @@ abstract class Bootstrap {
 
     const update = async () => {
       const status = await serverStatus.getStatus()
-      bot.client.user
-        ?.setPresence({
-          activity: {
-            type: status.active ? 'PLAYING' : 'LISTENING',
+      bot.client.user?.setPresence({
+        activities: [
+          {
+            type: status.active ? Discord.ActivityType.Playing : Discord.ActivityType.Listening,
             name: status.text,
           },
-        })
-        .catch((err) => this.log.error('Failed to set presence', err))
+        ],
+      })
     }
 
     update()

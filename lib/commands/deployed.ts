@@ -12,7 +12,7 @@ export class DeployedCommand implements Command {
   readonly onlyMods = false
 
   async handleMessage(arg: string, sendReply: (message: string | string[]) => void, message: Message) {
-    message.channel.startTyping()
+    message.channel.sendTyping()
 
     try {
       const sftp = await SftpHandler.getConnection()
@@ -23,8 +23,6 @@ export class DeployedCommand implements Command {
     } catch (err) {
       this.log.error('Failed to get last deploy', err)
       sendReply(Messages.UNKNOWN_ERROR)
-    } finally {
-      message.channel.stopTyping()
     }
   }
 }

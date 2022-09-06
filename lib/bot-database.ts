@@ -28,7 +28,7 @@ export class BotDatabase {
   getUserRoles(): Promise<string[]> {
     return this.db!.collection('config')
       .findOne({ id: BotDatabase.ROLE_KEY })
-      .then(data => (Array.isArray(data.roles) ? data.roles : []))
+      .then((data) => (Array.isArray(data.roles) ? data.roles : []))
   }
 
   saveUserRoles(roles: string[]) {

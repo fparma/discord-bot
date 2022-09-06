@@ -34,14 +34,14 @@ export abstract class PboUploader {
   }
 
   private static getPboNames(files: SftpClient.FileInfo[]) {
-    return files.filter(v => v.type === '-' && v.name.endsWith('.pbo')).map(v => v.name)
+    return files.filter((v) => v.type === '-' && v.name.endsWith('.pbo')).map((v) => v.name)
   }
 
   private static getValidFilename(wantedName: string, fileNames: string[]) {
     const wantedLower = path.basename(wantedName.toLowerCase(), '.pbo')
     const matches = fileNames
-      .map(v => path.basename(v.toLowerCase(), '.pbo'))
-      .filter(v => v.startsWith(wantedLower.substring(0, wantedLower.lastIndexOf('.'))))
+      .map((v) => path.basename(v.toLowerCase(), '.pbo'))
+      .filter((v) => v.startsWith(wantedLower.substring(0, wantedLower.lastIndexOf('.'))))
 
     let i = 0
     let ret = wantedLower

@@ -19,7 +19,7 @@ export class DiscordBot {
 
     this.client.once('ready', () => {
       this.log.info(`Connected to discord as "${this.user?.username}"`)
-      this.client.on('message', (msg) => (isProd ? this.onMessage(msg) : this.handleDevelopmentMessage(msg)))
+      this.client.on('messageCreate', (msg) => (isProd ? this.onMessage(msg) : this.handleDevelopmentMessage(msg)))
     })
 
     this.client.on('disconnect', (err) => {
@@ -37,7 +37,7 @@ export class DiscordBot {
   }
 
   handleDevelopmentMessage(message: Discord.Message) {
-    if (message.channel.type === 'dm') return
+    if (message.channel.type === Discord.ChannelType.DM) return
 
     const BOT_TEST_CHANNEL = '563757919418712064'
     if (message.channel.id !== BOT_TEST_CHANNEL) return
@@ -109,11 +109,12 @@ export class DiscordBot {
    * @param message
    */
   private replyToMessage(reply: string | string[], message: Discord.Message): void {
+    const { author } = message
+
     if (Array.isArray(reply)) {
       reply = reply.join('\n')
     }
 
-    const { author } = message
     if (!reply) {
       this.log.warn(
         `A command tried to send an empty reply to ${this.formatAuthor(author)}), stopping. Message: ${message.content}`

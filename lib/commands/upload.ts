@@ -1,7 +1,8 @@
 import { Message } from 'discord.js'
 import { unlink } from 'fs'
 import { basename, join } from 'path'
-import * as rimraf from 'rimraf'
+import rimraf from 'rimraf'
+import sanitizeFilename from 'sanitize-filename'
 import { LoggerFactory } from '../logger'
 import * as Messages from '../messages'
 import { PboDownloader } from '../pbo/pbo-downloader'
@@ -9,7 +10,6 @@ import { PBO_STATES } from '../pbo/pbo-states-enum'
 import { PboTools } from '../pbo/pbo-tools'
 import { PboUploader } from '../pbo/pbo-uploader'
 import { Command } from './command'
-const sanitizeFilename = require('sanitize-filename')
 
 // TODO: from legacy. move this into a generic function
 const uploadedThrottle = new Map()
@@ -55,9 +55,8 @@ export class UploadCommand implements Command {
     const pboFolder = join(this.tempFolder, `${sanitizedName}_${goodEnoughRandom}`)
     const pboPath = `${pboFolder}.pbo`
 
-    message.channel.startTyping()
+    message.channel.sendTyping()
     const done = (reply: string) => {
-      message.channel.stopTyping()
       unlink(pboPath, (err) => err && err.code != 'ENOENT' && this.log.warn('Error unlinking pbo', pboPath, err))
       rimraf(pboFolder, { glob: false }, (err) => err && this.log.warn('Error removing pbo folder', pboFolder, err))
       sendReply(reply)
