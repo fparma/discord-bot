@@ -36,7 +36,7 @@ describe('PboDownloader', () => {
     expect(checkUrl('https://test.pbo')).toEqual(true)
   })
 
-  it('a needle head error is resolved as bad host', async done => {
+  it('a needle head error is resolved as bad host', async (done) => {
     mock.needle = {
       head: (url: string, callback: Function) => {
         expect(url).toEqual(pboUrl)
@@ -49,7 +49,7 @@ describe('PboDownloader', () => {
     done()
   })
 
-  it('verifies headers on file', async done => {
+  it('verifies headers on file', async (done) => {
     const response: Partial<IncomingMessage> = {
       statusCode: 500,
     }
@@ -89,7 +89,7 @@ describe('PboDownloader', () => {
     done()
   })
 
-  it('aborts a download if size too large', async done => {
+  it('aborts a download if size too large', async (done) => {
     const emitter = new EventEmitter()
 
     mock.needle = {
@@ -124,7 +124,7 @@ describe('PboDownloader', () => {
 
     getPboDownloader()
       .download(pboUrl, pboPath)
-      .then(status => {
+      .then((status) => {
         expect(status).toEqual(PBO_STATES.DOWNLOAD_FILE_TOO_LARGE)
         expect(piped).toEqual(true)
         expect(aborted).toEqual(true)
@@ -133,7 +133,7 @@ describe('PboDownloader', () => {
   })
 
   function testErrorAndSuccess(msg: string, emitError: boolean) {
-    it(msg, async done => {
+    it(msg, async (done) => {
       const emitter = new EventEmitter()
 
       mock.needle = {
@@ -167,7 +167,7 @@ describe('PboDownloader', () => {
       resp.push({ length: 1 }, { length: 0 })
       getPboDownloader()
         .download(pboUrl, pboPath)
-        .then(status => {
+        .then((status) => {
           expect(status).toEqual(emitError ? PBO_STATES.DOWNLOAD_BAD_HOST : PBO_STATES.DOWNLOAD_OK)
           expect(aborted).toEqual(false)
           expect(piped).toEqual(true)

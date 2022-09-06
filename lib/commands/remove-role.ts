@@ -21,17 +21,17 @@ export class RemoveRoleCommand implements Command {
 
     const roles = await stringToRoles(message.guild as Guild, arg.split(' '))
     if (roles.size === 0) return sendReply('Found no matching roles')
-    const roleIds = roles.map(role => role.id)
+    const roleIds = roles.map((role) => role.id)
 
     try {
       const allowedRoles = await this.db.getUserRoles()
-      const allOk = roleIds.every(role => allowedRoles.includes(role))
+      const allOk = roleIds.every((role) => allowedRoles.includes(role))
 
       if (!allOk) {
         this.log.warn(
           'Not allowed assign',
           message.author.username,
-          roles.map(role => role.name),
+          roles.map((role) => role.name),
           roleIds,
           allowedRoles
         )
@@ -41,7 +41,7 @@ export class RemoveRoleCommand implements Command {
       const member = await getMemberFromMessage(message)
       if (!member) return
 
-      const assignable = roleIds.filter(role => member.roles.cache.has(role))
+      const assignable = roleIds.filter((role) => member.roles.cache.has(role))
       this.log.info('removing roles to user', message.author.username, assignable)
 
       if (assignable.length === 0) return

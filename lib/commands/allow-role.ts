@@ -39,8 +39,8 @@ export class AllowRoleCommand implements Command {
     if (roles.size === 0) return sendReply('Found no matching roles')
 
     const notOkRoles: string[] = []
-    const ids = roles.map(role => {
-      if (INVALID_PERMISSION_ROLE.some(permission => role.permissions.has(permission))) {
+    const ids = roles.map((role) => {
+      if (INVALID_PERMISSION_ROLE.some((permission) => role.permissions.has(permission))) {
         notOkRoles.push(role.name)
       }
       return role.id

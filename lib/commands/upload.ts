@@ -57,8 +57,8 @@ export class UploadCommand implements Command {
 
     message.channel.sendTyping()
     const done = (reply: string) => {
-      unlink(pboPath, err => err && err.code != 'ENOENT' && this.log.warn('Error unlinking pbo', pboPath, err))
-      rimraf(pboFolder, { glob: false }, err => err && this.log.warn('Error removing pbo folder', pboFolder, err))
+      unlink(pboPath, (err) => err && err.code != 'ENOENT' && this.log.warn('Error unlinking pbo', pboPath, err))
+      rimraf(pboFolder, { glob: false }, (err) => err && this.log.warn('Error removing pbo folder', pboFolder, err))
       sendReply(reply)
     }
 

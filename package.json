@@ -7,7 +7,8 @@
     "test-watch": "chokidar -p './test/**/*' -c 'npm run test'",
     "start": "node -r @swc-node/register -r dotenv/config index.ts",
     "setup-db": "docker run -d -p 27017-27019:27017-27019 --name mongodb mongo:3.6.12",
-    "ts-check": "tsc --noEmit"
+    "ts-check": "tsc --noEmit",
+    "format": "prettier --write ."
   },
   "author": "Cuel",
   "license": "ISC",
@@ -36,6 +37,7 @@
     "chokidar-cli": "^2.1.0",
     "jasmine": "^2.8.0",
     "jasmine-ts": "^0.2.1",
+    "prettier": "^2.7.1",
     "proxyquire": "^1.8.0"
   }
 }

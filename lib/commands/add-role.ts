@@ -12,7 +12,7 @@ export class RoleCommand implements Command {
   readonly onlyMods = false
   private log = LoggerFactory.create(RoleCommand)
 
-  constructor(private db: BotDatabase) { }
+  constructor(private db: BotDatabase) {}
 
   async handleMessage(arg: string, sendReply: (message: string | string[]) => void, message: Message) {
     if (!isMessageInGuildChannel(message)) {
@@ -22,17 +22,17 @@ export class RoleCommand implements Command {
     const roles = await stringToRoles(message.guild as Guild, arg.split(' '))
     if (roles.size === 0) return sendReply('Found no matching roles')
 
-    const roleIds = roles.map(role => role.id)
+    const roleIds = roles.map((role) => role.id)
 
     try {
       const allowedRoles = await this.db.getUserRoles()
-      const allOk = roleIds.every(role => allowedRoles.includes(role))
+      const allOk = roleIds.every((role) => allowedRoles.includes(role))
 
       if (!allOk) {
         this.log.warn(
           'Not allowed assign',
           message.author.username,
-          roles.map(role => role.name),
+          roles.map((role) => role.name),
           roleIds,
           allowedRoles
         )
@@ -45,7 +45,7 @@ export class RoleCommand implements Command {
         return
       }
 
-      const assignable = roleIds.filter(role => !member.roles.cache.has(role))
+      const assignable = roleIds.filter((role) => !member.roles.cache.has(role))
       // member already have all roles
       if (assignable.length === 0) {
         await message.react(Messages.CHECK_MARK)

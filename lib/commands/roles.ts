@@ -13,7 +13,7 @@ export class RolesCommand implements Command {
   readonly onlyMods = false
   private log = LoggerFactory.create(RolesCommand)
 
-  constructor(private db: BotDatabase) { }
+  constructor(private db: BotDatabase) {}
 
   async handleMessage(arg: string, sendReply: (message: string | string[]) => void, message: Message) {
     if (!isMessageInGuildChannel(message)) {
@@ -26,10 +26,8 @@ export class RolesCommand implements Command {
       const allowedRoles = await this.db.getUserRoles()
 
       const roles = guild.roles.cache
-        .filter(role =>
-          allowedRoles.includes(role.id)
-        )
-        .map(role => role.name)
+        .filter((role) => allowedRoles.includes(role.id))
+        .map((role) => role.name)
         .sort((a, b) => a.localeCompare(b))
 
       sendReply(`Available roles: ${roles.join(', ')}`)

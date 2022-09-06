@@ -21,7 +21,7 @@ describe('PboTools', () => {
     return ret.PboTools
   }
 
-  it('calls extractpbo with the pbopath', async done => {
+  it('calls extractpbo with the pbopath', async (done) => {
     mock.child_process = {
       exec: (command: string, callback: Function) => {
         expect(command).toEqual(`extractpbo -PWS ${pboPath}`)
@@ -34,7 +34,7 @@ describe('PboTools', () => {
     done()
   })
 
-  it('rejects an error from extractpbo', async done => {
+  it('rejects an error from extractpbo', async (done) => {
     const expectedErr = new Error('test error')
     mock.child_process = {
       exec: (command: string, callback: Function) => {
@@ -52,7 +52,7 @@ describe('PboTools', () => {
     }
   })
 
-  it('calls extractpbo with correct parameters', async done => {
+  it('calls extractpbo with correct parameters', async (done) => {
     mock.fs = {
       access: (folderPath: string, constant: any, callback: Function) => {
         expect(folderPath).toEqual(path.join(pboFolderPath, 'mission.sqm'))

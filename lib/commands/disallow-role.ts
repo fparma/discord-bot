@@ -22,7 +22,7 @@ export class DisallowRoleCommand implements Command {
     const roles = await stringToRoles(message.guild as Guild, arg.split(' '))
     if (roles.size === 0) return sendReply('Found no matching roles')
 
-    const ids = roles.map(role => role.id)
+    const ids = roles.map((role) => role.id)
 
     try {
       this.log.info('Removing user roles', { author: message.author.username + '_' + message.author.id }, ids)
