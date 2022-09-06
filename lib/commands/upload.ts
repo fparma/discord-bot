@@ -10,7 +10,6 @@ import { PBO_STATES } from '../pbo/pbo-states-enum'
 import { PboTools } from '../pbo/pbo-tools'
 import { PboUploader } from '../pbo/pbo-uploader'
 import { Command } from './command'
-const sanitizeFilename = require('sanitize-filename')
 
 // TODO: from legacy. move this into a generic function
 const uploadedThrottle = new Map()
