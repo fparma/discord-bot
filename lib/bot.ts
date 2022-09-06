@@ -164,11 +164,11 @@ export class DiscordBot {
     const color: Discord.ColorResolvable = wasEdited ? 'Yellow' : 'DarkRed'
     const embed = new Discord.EmbedBuilder()
       .setColor(color)
-      .addFields({ name: 'Original message', value: prev.content as string })
+      .addFields({ name: 'Original message', value: prev.content })
 
     if (wasEdited) {
       embed.setTitle(`${prev.author.tag} edited a message in #${(prev.channel as Discord.GuildChannel).name}`)
-      embed.addFields({ name: 'Updated message', value: next.content as string })
+      embed.addFields({ name: 'Updated message', value: next.content })
       embed.setURL(prev.url)
     } else {
       const fetchedLogs = await prev.guild.fetchAuditLogs({
