@@ -7,7 +7,7 @@
     "test-watch": "chokidar -p './test/**/*' -c 'npm run test'",
     "start": "node -r @swc-node/register -r dotenv/config index.ts",
     "setup-db": "docker run -d -p 27017-27019:27017-27019 --name mongodb mongo:3.6.12",
-    "check:types": "tsc --noEmit"
+    "check":"tsc --noEmit"
   },
   "author": "Cuel",
   "license": "ISC",

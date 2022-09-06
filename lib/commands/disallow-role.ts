@@ -27,7 +27,7 @@ export class DisallowRoleCommand implements Command {
     try {
       this.log.info('Removing user roles', { author: message.author.username + '_' + message.author.id }, ids)
       await this.db.removeUserRoles(ids)
-      await message.react('✅')
+      await message.react(Messages.CHECK_MARK)
     } catch (err) {
       this.log.error('Failed to remove user roles', err)
       return sendReply(Messages.UNKNOWN_ERROR)

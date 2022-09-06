@@ -7,7 +7,7 @@ import * as Messages from '../messages'
 
 export class RoleCommand implements Command {
   readonly type = '!role'
-  readonly usageInfo = 'Adds whitelist roles. Usage: !role arma-event more'
+  readonly usageInfo = 'Adds whitelisted role(s). Usage: !role role-to-add role-to-add-2'
   readonly rateLimit = 0
   readonly onlyMods = false
   private log = LoggerFactory.create(RoleCommand)
@@ -48,7 +48,7 @@ export class RoleCommand implements Command {
       if (assignable.length === 0) return
 
       await member.roles.add(assignable)
-      await message.react('✅')
+      await message.react(Messages.CHECK_MARK)
     } catch (err) {
       this.log.error(err)
       return sendReply(Messages.UNKNOWN_ERROR)

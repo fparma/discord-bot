@@ -7,7 +7,7 @@ import * as Messages from '../messages'
 
 export class RemoveRoleCommand implements Command {
   readonly type = '!removerole'
-  readonly usageInfo = 'Removes an assigned role. Usage: !removerole arma-event more'
+  readonly usageInfo = 'Removes assigned role(s). Usage: !removerole role-to-add role-to-add-2'
   readonly onlyMods = false
   readonly rateLimit = 0
   private log = LoggerFactory.create(RemoveRoleCommand)
@@ -47,7 +47,7 @@ export class RemoveRoleCommand implements Command {
       if (assignable.length === 0) return
 
       await member.roles.remove(assignable)
-      await message.react('✅')
+      await message.react(Messages.CHECK_MARK)
     } catch (err) {
       this.log.error(err)
       return sendReply(Messages.UNKNOWN_ERROR)
