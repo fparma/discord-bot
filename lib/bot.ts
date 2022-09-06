@@ -178,7 +178,7 @@ export class DiscordBot {
 
       const logEntry = fetchedLogs.entries.first()
       if (!logEntry) {
-        embed.setAuthor({ name: 'NO AUDIT LOGS, unclear what happened' })
+        embed.setTitle('NO AUDIT LOGS, unclear what happened')
       } else {
         const { executor, target } = logEntry
         if (target.id === prev.author.id) {
