@@ -12,7 +12,7 @@ export class RoleCommand implements Command {
   readonly onlyMods = false
   private log = LoggerFactory.create(RoleCommand)
 
-  constructor(private db: BotDatabase) {}
+  constructor(private db: BotDatabase) { }
 
   async handleMessage(arg: string, sendReply: (message: string | string[]) => void, message: Message) {
     if (!isMessageInGuildChannel(message)) {
@@ -40,13 +40,19 @@ export class RoleCommand implements Command {
       }
 
       const member = await getMemberFromMessage(message)
-      if (!member) return
+      if (!member) {
+        this.log.warn('could not fetch member', message.author.id)
+        return
+      }
 
       const assignable = roleIds.filter(role => !member.roles.cache.has(role))
+      // member already have all roles
+      if (assignable.length === 0) {
+        await message.react(Messages.CHECK_MARK)
+        return
+      }
+
       this.log.info('assigning roles to user', message.author.username, assignable)
-
-      if (assignable.length === 0) return
-
       await member.roles.add(assignable)
       await message.react(Messages.CHECK_MARK)
     } catch (err) {

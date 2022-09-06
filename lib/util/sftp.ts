@@ -1,4 +1,4 @@
-import * as SftpClient from 'ssh2-sftp-client'
+import SftpClient from 'ssh2-sftp-client'
 import { LoggerFactory } from '../logger'
 
 export abstract class SftpHandler {

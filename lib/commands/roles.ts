@@ -13,22 +13,22 @@ export class RolesCommand implements Command {
   readonly onlyMods = false
   private log = LoggerFactory.create(RolesCommand)
 
-  constructor(private db: BotDatabase) {}
+  constructor(private db: BotDatabase) { }
 
   async handleMessage(arg: string, sendReply: (message: string | string[]) => void, message: Message) {
     if (!isMessageInGuildChannel(message)) {
       return sendReply('This command can only be used in a guild channel')
     }
 
-    const guild = message.guild as Guild
-
     try {
-      message.channel.startTyping()
-      const available = await this.db.getUserRoles()
+      const guild = message.guild as Guild
+      message.channel.sendTyping()
+      const allowedRoles = await this.db.getUserRoles()
+
       const roles = guild.roles.cache
-        .filter(role => {
-          return available.includes(role.id)
-        })
+        .filter(role =>
+          allowedRoles.includes(role.id)
+        )
         .map(role => role.name)
         .sort((a, b) => a.localeCompare(b))
 
@@ -36,8 +36,6 @@ export class RolesCommand implements Command {
     } catch (err) {
       this.log.error(err)
       sendReply(Messages.UNKNOWN_ERROR)
-    } finally {
-      message.channel.stopTyping()
     }
   }
 }

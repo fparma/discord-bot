@@ -19,11 +19,7 @@ export class DiscordBot {
 
     this.client.once('ready', () => {
       this.log.info(`Connected to discord as "${this.user?.username}"`)
-<<<<<<< HEAD
-      this.client.on('message', (msg) => (isProd ? this.onMessage(msg) : this.handleDevelopmentMessage(msg)))
-=======
       this.client.on('messageCreate', msg => (isProd ? this.onMessage(msg) : this.handleDevelopmentMessage(msg)))
->>>>>>> upgrade packages
     })
 
     this.client.on('disconnect', (err) => {

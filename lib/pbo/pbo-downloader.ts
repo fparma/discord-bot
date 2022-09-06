@@ -52,16 +52,16 @@ export abstract class PboDownloader {
   }
 
   private static verifyHeaderResponse(response: IncomingMessage): PBO_STATES {
-    const { statusCode = 500, headers } = response
+    const { statusCode = 500, headers = {} } = response
     if (+statusCode >= 400) return PBO_STATES.DOWNLOAD_BAD_STATUS_CODE
 
-    const length = headers ? headers['content-length'] : null
-    if (!length) return PBO_STATES.DOWNLOAD_BAD_HOST
-    if (+length > PboDownloader.MAX_FILESIZE) return PBO_STATES.DOWNLOAD_FILE_TOO_LARGE
+    const contentLength = Number(headers['content-length'])
+    if (!contentLength || Number.isNaN(contentLength)) return PBO_STATES.DOWNLOAD_BAD_HOST
+    if (contentLength > PboDownloader.MAX_FILESIZE) return PBO_STATES.DOWNLOAD_FILE_TOO_LARGE
 
-    const type = headers ? headers['content-type'] : null
     // we could check for application/octet-stream here but there's no garantuee that'll be sent back
     // checking for text/html should be enough to cover custom 404 sites, that returns 200 status code
+    const type = headers['content-type']
     if (type == 'text/html') return PBO_STATES.DOWNLOAD_BAD_HOST
 
     return PBO_STATES.DOWNLOAD_HEADERS_OK

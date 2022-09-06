@@ -11,15 +11,13 @@ export class StatsCommand implements Command {
   readonly onlyMods = false
   private static log = LoggerFactory.create(StatsCommand)
 
-  constructor(private db: Database) {}
+  constructor(private db: Database) { }
 
   async handleMessage(arg: string, sendReply: (message: string | string[]) => void, message: Message) {
     if (!arg) return sendReply(Messages.REPLY_PROVIDE_ARGUMENT)
+    message.channel.sendTyping()
 
-    message.channel.startTyping()
     const reply = await StatsCommand.getUserStatsOrErrorMessage(this.db, arg)
-
-    message.channel.stopTyping()
     sendReply(reply)
   }
 
