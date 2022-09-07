@@ -1,4 +1,4 @@
-import { GuildMember, Message, Guild, Role, Collection, User, ChannelType } from 'discord.js'
+import { ChannelType, Collection, Guild, GuildMember, Message, Role, User } from 'discord.js'
 
 export const isModerator = (member: GuildMember | null) => (member ? member.permissions.has('ManageGuild') : false)
 
@@ -16,3 +16,5 @@ export const stringToRoles = async (guild: Guild, roles: string[]): Promise<Coll
 
   return (await guild.roles.fetch()).filter((role) => rolesLower.includes(role.name.toLowerCase()))
 }
+
+export const formatAuthor = (author: User) => `${author.username}: (${author.id})`
