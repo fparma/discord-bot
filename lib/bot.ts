@@ -152,7 +152,7 @@ export class DiscordBot {
   }
 
   private async onMessageEditOrDelete(prev: Discord.Message, next?: Discord.Message) {
-    if (!prev.guild) return
+    if (!prev.guild || prev.author.bot) return
 
     const wasEdited = !!next
     // can something else edit the message?
