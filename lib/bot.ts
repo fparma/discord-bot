@@ -161,36 +161,36 @@ export class DiscordBot {
       return
     }
 
-    const color: Discord.ColorResolvable = wasEdited ? 'Yellow' : 'DarkRed'
-    const embed = new Discord.EmbedBuilder()
-      .setColor(color)
-      .addFields({ name: 'Original message', value: prev.content })
-
-    if (wasEdited) {
-      embed.setTitle(`${prev.author.tag} edited a message in #${(prev.channel as Discord.GuildChannel).name}`)
-      embed.addFields({ name: 'Updated message', value: next.content })
-      embed.setURL(prev.url)
-    } else {
-      const fetchedLogs = await prev.guild.fetchAuditLogs({
-        limit: 1,
-        type: Discord.AuditLogEvent.MessageDelete,
-      })
-
-      const logEntry = fetchedLogs.entries.first()
-      if (!logEntry) {
-        embed.setTitle('NO AUDIT LOGS, unclear what happened')
-      } else {
-        const { executor, target } = logEntry
-        const title =
-          target.id === prev.author.id
-            ? `${executor ? executor.tag : '<UNKNOWN>'} deleted ${prev.author.tag}'s`
-            : `Assumption: ${prev.author.tag} deleted their own`
-
-        embed.setTitle(`${title} message in #${(prev.channel as Discord.GuildChannel).name}`)
-      }
-    }
-
     try {
+      const color: Discord.ColorResolvable = wasEdited ? 'Yellow' : 'DarkRed'
+      const embed = new Discord.EmbedBuilder()
+        .setColor(color)
+        .addFields({ name: 'Original message', value: prev.content })
+
+      if (wasEdited) {
+        embed.setTitle(`${prev.author.tag} edited a message in #${(prev.channel as Discord.GuildChannel).name}`)
+        embed.addFields({ name: 'Updated message', value: next.content })
+        embed.setURL(prev.url)
+      } else {
+        const fetchedLogs = await prev.guild.fetchAuditLogs({
+          limit: 1,
+          type: Discord.AuditLogEvent.MessageDelete,
+        })
+
+        const logEntry = fetchedLogs.entries.first()
+        if (!logEntry) {
+          embed.setTitle('NO AUDIT LOGS, unclear what happened')
+        } else {
+          const { executor, target } = logEntry
+          const title =
+            target.id === prev.author.id
+              ? `${executor ? executor.tag : '<UNKNOWN>'} deleted ${prev.author.tag}'s`
+              : `Assumption: ${prev.author.tag} deleted their own`
+
+          embed.setTitle(`${title} message in #${(prev.channel as Discord.GuildChannel).name}`)
+        }
+      }
+
       const channel = (await this.client.channels.fetch(BOT_LOG_CHANNEL)) as Discord.TextChannel
 
       if (isModerator(prev.member)) {
