@@ -25,8 +25,8 @@ abstract class Bootstrap {
     const isProd = process.env.NODE_ENV === 'production'
     this.log.info('Using environment', isProd ? 'production' : 'development', { isProd })
 
-    const db = new Database(new mongodb.MongoClient())
-    const botDb = new BotDatabase(new mongodb.MongoClient())
+    const db = new Database()
+    const botDb = new BotDatabase()
 
     const bot = new DiscordBot(
       new Discord.Client({
@@ -54,7 +54,7 @@ abstract class Bootstrap {
 
     this.setupServerStatus(bot)
 
-    if (isProd) {
+    if (true) {
       this.setupAnnouncer(db, bot)
     }
     this.log.info('Started')
