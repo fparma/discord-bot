@@ -9,7 +9,7 @@ export abstract class PboDownloader {
   private static log = LoggerFactory.create(PboDownloader)
 
   static checkUrl(url: string): boolean {
-    return new RegExp('^https?://').test(url) && url.endsWith('.pbo')
+    return new RegExp('^https?://').test(url)
   }
 
   static async verifyHeaders(url: string): Promise<PBO_STATES> {
