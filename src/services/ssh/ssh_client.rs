@@ -1,3 +1,4 @@
+use std::mem;
 use crate::commands::models::pbo_name::PboName;
 use crate::commands::models::repo::Repo;
 use crate::commands::upload::errors::PboUploadError;
@@ -98,6 +99,8 @@ impl SshClient {
     }
 
     pub async fn restart_server(&self) -> Result<(), anyhow::Error> {
+        let permit = self.semaphore.try_acquire()?;
+
         let ssh = get_ssh_session(self).await?;
 
         let restart_path = PathBuf::new()
@@ -106,7 +109,8 @@ impl SshClient {
 
         let restart_command = format!("bash {}", restart_path.display());
 
-        let exit_code = ssh.command(restart_command.as_str())
+        let exit_code = ssh
+            .command(restart_command.as_str())
             .spawn()
             .await
             .map_err(|e| anyhow::anyhow!("Failed to restart server: {}", e))?
@@ -115,8 +119,13 @@ impl SshClient {
 
         if !exit_code.success() {
             error!("Failed to restart server, exit code: {}", exit_code);
-            return Err(anyhow::anyhow!("Failed to restart server, exit code: {}", exit_code));
+            return Err(anyhow::anyhow!(
+                "Failed to restart server, exit code: {}",
+                exit_code
+            ));
         }
+
+        mem::drop(permit);
 
         Ok(())
     }
