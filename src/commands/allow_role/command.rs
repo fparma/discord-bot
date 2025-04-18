@@ -7,7 +7,7 @@ use anyhow::{anyhow, Error};
 use crate::commands::common::error::command_error::CommandError;
 use crate::commands::common::error::models::bad_permissions::BadPermissions;
 
-#[poise::command(slash_command, rename = "allow_role", user_cooldown = 5, guild_only)]
+#[poise::command(slash_command, rename = "allow_role", user_cooldown = 5, guild_only, reuse_response)]
 /// Allow a role to be assigned to users
 pub async fn allow_role(
     ctx: Context<'_>,

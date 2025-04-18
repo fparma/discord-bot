@@ -64,7 +64,7 @@ pub struct ArmaConfig {
 #[derive(Envconfig, Debug, Clone)]
 pub struct FtpPathConfig {
     #[envconfig(from = "FTP_CWD_REPOS")]
-    pub repo_missions_path: String,
+    pub repos_folder_path: String,
     #[envconfig(from = "FTP_DEPLOYED_REPO_INFO")]
     pub deployed_repo_info: String,
     #[envconfig(from = "FTP_CWD_SERVER_MISSIONS")]

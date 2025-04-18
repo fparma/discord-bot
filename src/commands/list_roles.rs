@@ -4,6 +4,7 @@ use crate::Context;
 use anyhow::Error;
 
 #[poise::command(slash_command, rename = "list_roles", user_cooldown = 5, guild_only)]
+/// List all allowed roles
 pub async fn list_roles(ctx: Context<'_>) -> Result<(), Error> {
     ok_or_respond_with_error!(ctx, do_list_role(ctx,).await);
 

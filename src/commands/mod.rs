@@ -8,3 +8,4 @@ pub mod remove_role;
 pub mod stats;
 pub mod upload;
 pub mod list_roles;
+pub mod restart_server;

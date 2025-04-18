@@ -8,6 +8,7 @@ use openssh_sftp_client::{Sftp, SftpOptions};
 use poise::futures_util::{StreamExt, TryFutureExt};
 use std::path::{Path, PathBuf};
 use tokio::sync::Semaphore;
+use tracing::error;
 
 #[derive(Debug)]
 pub struct SshClient {
@@ -59,7 +60,7 @@ impl SshClient {
             .map_err(|e| PboUploadError::UnknownError(e.into()))?;
 
         let target_path = PathBuf::new()
-            .join(self.ftp_path_config.repo_missions_path.clone())
+            .join(self.ftp_path_config.repos_folder_path.clone())
             .join(repo.to_string())
             .join("mpmissions");
 
@@ -94,6 +95,30 @@ impl SshClient {
         drop(permit);
 
         Ok(name)
+    }
+
+    pub async fn restart_server(&self) -> Result<(), anyhow::Error> {
+        let ssh = get_ssh_session(self).await?;
+
+        let restart_path = PathBuf::new()
+            .join(&self.ftp_path_config.repos_folder_path)
+            .join("restart.sh");
+
+        let restart_command = format!("bash {}", restart_path.display());
+
+        let exit_code = ssh.command(restart_command.as_str())
+            .spawn()
+            .await
+            .map_err(|e| anyhow::anyhow!("Failed to restart server: {}", e))?
+            .wait()
+            .await?;
+
+        if !exit_code.success() {
+            error!("Failed to restart server, exit code: {}", exit_code);
+            return Err(anyhow::anyhow!("Failed to restart server, exit code: {}", exit_code));
+        }
+
+        Ok(())
     }
 }
 
