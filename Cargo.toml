@@ -24,3 +24,5 @@ regex = "1.11.1"
 # TODO: replace with actual version once available
 # PR: https://github.com/gamedig/rust-gamedig/pull/240
 gamedig = {git = "https://github.com/Perondas/rust-gamedig.git"}
+sled = "0.34.7"
+bincode = { version = "2.0.1" , features = ["serde"]}

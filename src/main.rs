@@ -4,6 +4,7 @@ use poise::serenity_prelude as serenity;
 use poise::serenity_prelude::ClientBuilder;
 use std::sync::Arc;
 use tracing::info;
+use crate::services::event_announcer::event_announcer_service::run_event_announcer;
 use crate::services::status_updater::status_updater_service::run_status_updater;
 
 pub mod commands;
@@ -45,9 +46,17 @@ async fn main() {
     .expect("Failed to create client");
     
     let shard_client = client.shard_manager.clone();
-    
+    let s = state.clone();
+
     tokio::spawn(async move {
-        run_status_updater(shard_client,state).await;
+        run_status_updater(shard_client,s).await;
+    });
+
+    let http_client = client.http.clone();
+    let s = state.clone();
+
+    tokio::spawn(async move {
+        run_event_announcer(http_client,s).await;
     });
     
     client.start().await.expect("Failed to start bot");

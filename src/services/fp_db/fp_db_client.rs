@@ -1,7 +1,11 @@
+use log::info;
 use crate::config::FpDbConfig;
 use crate::services::fp_db::models::group::Group;
 use crate::services::fp_db::models::user::User;
+use mongodb::bson;
 use mongodb::bson::doc;
+use poise::futures_util::{Stream, TryStreamExt};
+use crate::services::fp_db::models::event::Event;
 
 #[derive(Debug, Clone)]
 pub struct FpDbClient {
@@ -44,5 +48,21 @@ impl FpDbClient {
         let count = collection.count_documents(filter).await?;
 
         Ok(count)
+    }
+
+    pub async fn find_future_events(&self) -> Result<Vec<Event>, anyhow::Error> {
+        let db = self.mongo_client.database("fparma");
+        let collection = db.collection::<Event>("events");
+        let filter = doc! { "date": {"$gte": bson::DateTime::now() } };
+
+        let mut cursor = collection.find(filter).sort(doc! {"date" : 1}).await?;
+
+        let mut events = Vec::with_capacity(cursor.size_hint().0);
+
+        while let Some(event) = cursor.try_next().await? {
+            events.push(event)
+        }
+
+        Ok(events)
     }
 }
