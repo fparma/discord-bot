@@ -1,1 +1,1 @@
-pub mod event_announcer;
+pub mod event_announcer_service;

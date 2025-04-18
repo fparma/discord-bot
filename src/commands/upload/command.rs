@@ -6,7 +6,7 @@ use crate::helpers::pbo_linter::lint_pbo;
 use crate::Context;
 use anyhow::{anyhow, Error};
 use poise::serenity_prelude::{ButtonStyle, CreateActionRow, CreateButton, Message};
-use poise::{CreateReply, Modal};
+use poise::CreateReply;
 use reqwest::Url;
 use std::env::temp_dir;
 use std::str::FromStr;
@@ -41,8 +41,7 @@ async fn do_upload_body(
     folder_name: &str,
 ) -> Result<(), PboUploadError> {
     let file = msg
-        .attachments
-        .get(0)
+        .attachments.first()
         .ok_or_else(|| PboUploadError::NoAttachment)?;
 
     let url = Url::parse(&file.url).map_err(|_| PboUploadError::BadAttachment)?;
@@ -106,7 +105,7 @@ pub fn extract_name_from_url(url: &Url) -> Result<PboName, PboUploadError> {
     let filename = url
         .path_segments()
         .ok_or(PboUploadError::BadAttachment)?
-        .last()
+        .next_back()
         .ok_or(PboUploadError::BadAttachment)?;
 
     PboName::parse(filename).map_err(|e| e.into())

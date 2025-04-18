@@ -4,13 +4,9 @@ use log::debug;
 use poise::futures_util::StreamExt;
 use reqwest::header::CONTENT_TYPE;
 use reqwest::Url;
-use serde::__private::de::TagOrContentField::Content;
 use std::env::temp_dir;
-use std::ffi::{OsStr, OsString};
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 use tokio::io::AsyncWriteExt;
-use tracing::info;
-use uuid::Uuid;
 
 const MAX_FILE_SIZE: usize = 20 * 1024 * 1024; // 20 MB
 

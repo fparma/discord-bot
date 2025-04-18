@@ -1,5 +1,4 @@
 use crate::commands::models::bad_roles::BadRoles;
-use std::fmt::Display;
 use thiserror::Error;
 
 #[derive(Debug, Error)]

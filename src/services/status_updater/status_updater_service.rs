@@ -1,8 +1,7 @@
-use crate::commands::models::repo::Repo;
 use crate::services::server_info::server_details::ServerDetails;
 use crate::state::AppState;
 use anyhow::Error;
-use log::{error, info};
+use log::error;
 use poise::serenity_prelude::{ActivityData, ShardManager};
 use std::sync::Arc;
 use std::time::Duration;

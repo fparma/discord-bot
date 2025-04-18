@@ -1,4 +1,3 @@
-use std::fmt::Display;
 use thiserror::Error;
 pub(crate) use crate::commands::common::error::models::bad_permissions::BadPermissions;
 

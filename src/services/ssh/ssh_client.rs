@@ -7,7 +7,6 @@ use openssh::{Session, SessionBuilder};
 use openssh_sftp_client::{Sftp, SftpOptions};
 use poise::futures_util::{StreamExt, TryFutureExt};
 use std::path::{Path, PathBuf};
-use std::sync::Arc;
 use tokio::sync::Semaphore;
 
 #[derive(Debug)]
@@ -36,7 +35,7 @@ impl SshClient {
     }
 
     pub async fn get_last_deploy(&self) -> Result<String, anyhow::Error> {
-        let sftp = get_sftp_session(&self).await?;
+        let sftp = get_sftp_session(self).await?;
 
         let content = sftp
             .fs()
@@ -64,7 +63,7 @@ impl SshClient {
             .join(repo.to_string())
             .join("mpmissions");
 
-        let sftp = get_sftp_session(&self).await?;
+        let sftp = get_sftp_session(self).await?;
         let pbos = get_pbo_files(&sftp, &target_path).await?;
 
         let name = find_available_name(pbos, pbo_name);

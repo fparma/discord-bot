@@ -5,7 +5,7 @@ use std::time::{Duration, Instant};
 use tokio::sync::Mutex;
 
 static EXISTING_ROLE_NAME_CACHE: LazyLock<ExistingRoleNameCache> =
-    LazyLock::new(|| ExistingRoleNameCache::new());
+    LazyLock::new(ExistingRoleNameCache::new);
 
 pub async fn autocomplete_existing_roles(
     ctx: Context<'_>,

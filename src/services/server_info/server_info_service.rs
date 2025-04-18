@@ -5,14 +5,14 @@ use crate::config::ArmaConfig;
 use crate::services::server_info::server_details::ServerDetails;
 
 #[derive(Debug)]
-pub struct ServerInfo {
+pub struct ServerInfoService {
     server_ip: IpAddr
 }
 
-impl ServerInfo {
+impl ServerInfoService {
     pub fn new(arma_config: &ArmaConfig) -> Self {
         Self {
-            server_ip: arma_config.server_ip.clone()
+            server_ip: arma_config.server_ip
         }
     }
     

@@ -2,7 +2,7 @@ use std::net::IpAddr;
 use envconfig::Envconfig;
 
 #[derive(Envconfig, Debug)]
-pub(crate) struct Config {
+pub struct Config {
     #[envconfig(nested)]
     pub db_config: DbConfig,
     #[envconfig(nested)]

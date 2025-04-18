@@ -1,1 +1,1 @@
-pub mod status_updater;
+pub mod status_updater_service;

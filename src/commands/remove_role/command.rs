@@ -1,6 +1,3 @@
-use crate::commands::add_role::errors::AddRoleError;
-use crate::commands::allow_role::errors::AllowRoleError;
-use crate::commands::allow_role::forbidden_permission::FORBIDDEN_PERMISSIONS;
 use crate::commands::common::macros::ok_or_respond_with_error;
 use crate::commands::models::bad_roles::BadRoles;
 use crate::commands::remove_role::errors::RemoveRoleError;
@@ -8,7 +5,7 @@ use crate::commands::common::autocomplete::allowed_roles::autocomplete_allowed_r
 use crate::Context;
 use anyhow::{anyhow, Error};
 use poise::serenity_prelude::{Role, RoleId};
-use crate::commands::common::error::error::CommandError;
+use crate::commands::common::error::command_error::CommandError;
 
 #[poise::command(slash_command, rename = "remove", user_cooldown = 5, guild_only)]
 pub async fn remove_role(
@@ -32,7 +29,7 @@ async fn do_remove_role(ctx: Context<'_>, roles: Vec<String>) -> Result<(), Comm
                 .iter()
                 .find(|(_, guild_role)| guild_role.name == role)
             {
-                Some(r) => Ok(r.clone()),
+                Some(r) => Ok(r),
                 None => Err(role),
             }
         })
@@ -54,10 +51,7 @@ async fn do_remove_role(ctx: Context<'_>, roles: Vec<String>) -> Result<(), Comm
 
     let desired_roles: Vec<(&RoleId, &Role)> = matched_roles
         .into_iter()
-        .filter_map(|role| match role {
-            Ok(role) => Some(role.clone()),
-            Err(_) => None,
-        })
+        .filter_map(|role| role.ok())
         .collect();
 
     let allowed_roles_ids = ctx.data().bot_db_client.get_allowed_roles().await?;
@@ -81,7 +75,7 @@ async fn do_remove_role(ctx: Context<'_>, roles: Vec<String>) -> Result<(), Comm
 
     let desired_roles_ids: Vec<_> = desired_roles
         .into_iter()
-        .map(|(id, _)| id.clone())
+        .map(|(id, _)| *id)
         .collect();
 
     member

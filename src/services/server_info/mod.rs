@@ -1,2 +1,2 @@
-pub mod server_info;
+pub mod server_info_service;
 pub mod server_details;

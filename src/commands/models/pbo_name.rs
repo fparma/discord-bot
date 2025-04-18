@@ -1,6 +1,5 @@
 use regex::Regex;
 use std::fmt::Display;
-use std::str::FromStr;
 use std::sync::LazyLock;
 use thiserror::Error;
 
@@ -46,7 +45,7 @@ impl PboName {
 
 impl Display for PboName {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", format!("{}.{}.pbo", self.name, self.map))
+        write!(f, "{}.{}.pbo", self.name, self.map)
     }
 }
 

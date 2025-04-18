@@ -1,2 +1,2 @@
 pub mod models;
-pub mod error;
+pub mod command_error;

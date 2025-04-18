@@ -1,11 +1,8 @@
-use crate::commands::allow_role::errors::{AllowRoleError, BadPermissions};
-use crate::commands::allow_role::forbidden_permission::FORBIDDEN_PERMISSIONS;
 use crate::commands::common::autocomplete::existing_roles::autocomplete_existing_roles;
 use crate::commands::common::macros::ok_or_respond_with_error;
 use crate::Context;
-use anyhow::{anyhow, Error};
-use poise::serenity_prelude::Permissions;
-use crate::commands::common::error::error::CommandError;
+use anyhow::Error;
+use crate::commands::common::error::command_error::CommandError;
 use crate::commands::forbid_role::errors::ForbidRoleError;
 
 #[poise::command(slash_command, rename = "forbid", user_cooldown = 5, guild_only)]
@@ -25,7 +22,7 @@ async fn do_allow_role(ctx: Context<'_>, role: String) -> Result<(), CommandErro
 
     let matched_role = guild_roles
         .into_iter()
-        .find(|(id, r)| r.name == role)
+        .find(|(_, r)| r.name == role)
         .map(|(_, role)| role);
 
     let role = match matched_role {

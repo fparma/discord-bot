@@ -1,14 +1,10 @@
-use crate::services::fp_db::fp_db_client::FpDbClient;
 use crate::state::AppState;
 use envconfig::Envconfig;
-use openssh::{Session, SessionBuilder};
 use poise::serenity_prelude as serenity;
 use poise::serenity_prelude::ClientBuilder;
-use std::fs;
 use std::sync::Arc;
 use tracing::info;
-use tracing_subscriber::fmt::format;
-use crate::services::status_updater::status_updater::run_status_updater;
+use crate::services::status_updater::status_updater_service::run_status_updater;
 
 pub mod commands;
 pub mod helpers;

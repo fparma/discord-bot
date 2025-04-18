@@ -4,8 +4,7 @@ use crate::commands::common::autocomplete::existing_roles::autocomplete_existing
 use crate::commands::common::macros::ok_or_respond_with_error;
 use crate::Context;
 use anyhow::{anyhow, Error};
-use poise::serenity_prelude::Permissions;
-use crate::commands::common::error::error::CommandError;
+use crate::commands::common::error::command_error::CommandError;
 use crate::commands::common::error::models::bad_permissions::BadPermissions;
 
 #[poise::command(slash_command, rename = "allow", user_cooldown = 5, guild_only)]
@@ -25,7 +24,7 @@ async fn do_allow_role(ctx: Context<'_>, role: String) -> Result<(), CommandErro
 
     let matched_role = guild_roles
         .into_iter()
-        .find(|(id, r)| r.name == role)
+        .find(|(_, r)| r.name == role)
         .map(|(_, role)| role);
 
     let role = match matched_role {

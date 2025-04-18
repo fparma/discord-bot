@@ -1,11 +1,10 @@
 use crate::Context;
-use log::info;
 use poise::serenity_prelude::{AutocompleteChoice, RoleId};
 use std::sync::{Arc, LazyLock};
 use std::time::{Duration, Instant};
 use tokio::sync::Mutex;
 
-static ALLOWED_ROLE_NAME_CACHE: LazyLock<RoleNameCache> = LazyLock::new(|| RoleNameCache::new());
+static ALLOWED_ROLE_NAME_CACHE: LazyLock<RoleNameCache> = LazyLock::new(RoleNameCache::new);
 
 pub async fn autocomplete_allowed_roles(
     ctx: Context<'_>,

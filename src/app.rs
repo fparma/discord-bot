@@ -5,11 +5,9 @@ use crate::commands::deployed::get_deployed;
 use crate::commands::remove_role::command::remove_role;
 use crate::commands::stats::get_stats;
 use crate::commands::upload::command::do_upload;
-use crate::config::BotConfig;
 use crate::state::AppState;
 use poise::builtins;
-use poise::serenity_prelude::Event;
-use poise::serenity_prelude::{self as serenity, Command};
+use poise::serenity_prelude::Command;
 use tracing::{debug, error};
 use crate::commands::forbid_role::command::forbid_role;
 
@@ -37,11 +35,9 @@ pub fn get_options() -> poise::FrameworkOptions<Arc<AppState>, anyhow::Error> {
             })
         },
 
-        event_handler: |_context, event, _framework, _state| {
+        event_handler: |_context, _, _framework, _state| {
             Box::pin(async move {
-                match event {
-                    _ => Ok(()),
-                }
+                Ok(())
             })
         },
         ..Default::default()
