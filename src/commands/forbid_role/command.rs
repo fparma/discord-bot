@@ -1,11 +1,12 @@
-use crate::commands::common::autocomplete::existing_roles::autocomplete_existing_roles;
+use crate::commands::common::autocomplete::existing_roles::{autocomplete_existing_roles, EXISTING_ROLE_NAME_CACHE};
 use crate::commands::common::macros::ok_or_respond_with_error;
 use crate::Context;
 use anyhow::Error;
 use crate::commands::common::error::command_error::CommandError;
 use crate::commands::forbid_role::errors::ForbidRoleError;
 
-#[poise::command(slash_command, rename = "forbid", user_cooldown = 5, guild_only)]
+#[poise::command(slash_command, rename = "forbid_role", user_cooldown = 5, guild_only)]
+/// Forbid a role from being assigned to users
 pub async fn forbid_role(
     ctx: Context<'_>,
     #[autocomplete = "autocomplete_existing_roles"]
@@ -41,6 +42,8 @@ async fn do_allow_role(ctx: Context<'_>, role: String) -> Result<(), CommandErro
     }
 
     ctx.data().bot_db_client.remove_user_role(role_id).await?;
+
+    EXISTING_ROLE_NAME_CACHE.clear().await;
 
     ctx.say("Role forbidden\nThis does not remove it from users").await?;
 

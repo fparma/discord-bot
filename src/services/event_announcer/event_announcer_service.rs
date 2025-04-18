@@ -2,11 +2,9 @@ use crate::services::event_announcer::event_announcement_state::EventAnnouncemen
 use crate::services::fp_db::models::event::Event;
 use crate::services::kv_cache::KVCache;
 use crate::state::AppState;
-use chrono::TimeDelta;
-use log::{error, info};
+use log::error;
 use mongodb::bson::DateTime;
-use poise::serenity_prelude::{Builder, ChannelId, CreateAllowedMentions, CreateEmbed, CreateMessage, Http, Mention, RoleId};
-use std::ops::Add;
+use poise::serenity_prelude::{ChannelId, CreateAllowedMentions, CreateEmbed, CreateMessage, Http, Mention, RoleId};
 use std::sync::Arc;
 use std::time::Duration;
 use tokio::time::sleep;
@@ -34,8 +32,7 @@ pub async fn run_event_announcer(client: Arc<Http>, state: Arc<AppState>) -> ! {
 
         let messages: Vec<_> = events
             .iter()
-            .map(|e| event_to_message(e, &state.kv_cache))
-            .filter_map(|v| v)
+            .filter_map(|e| event_to_message(e, &state.kv_cache))
             .flatten()
             .collect();
 
@@ -74,7 +71,7 @@ fn event_to_message(event: &Event, cache: &KVCache) -> Option<Vec<CreateMessage>
 
     if !state.initial_announcement {
         let message = CreateMessage::default()
-            .allowed_mentions(CreateAllowedMentions::new().all_users(true).all_roles(true))
+            .allowed_mentions(CreateAllowedMentions::new().all_roles(true))
             .content(format!(":joystick: New event! {}", arma_event_mention))
             .embed(embed.clone());
 
@@ -86,6 +83,7 @@ fn event_to_message(event: &Event, cache: &KVCache) -> Option<Vec<CreateMessage>
         && event.date < DateTime::now().saturating_add_duration(Duration::from_secs(30 * 60))
     {
         let message = CreateMessage::default()
+            .allowed_mentions(CreateAllowedMentions::new().all_roles(true))
             .content(format!(":joystick: Event is go in 30 minutes! {}", arma_event_mention))
             .embed(embed.clone());
 

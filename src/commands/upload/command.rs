@@ -12,12 +12,12 @@ use std::env::temp_dir;
 use std::str::FromStr;
 use uuid::Uuid;
 
-/// Upload a PBO to the server
 #[poise::command(
     context_menu_command = "Upload Mission",
     user_cooldown = 5,
     reuse_response
 )]
+/// Upload a PBO to the server
 pub async fn do_upload(
     ctx: Context<'_>,
     #[description = "Message to react to (enter a link or ID)"] msg: Message,

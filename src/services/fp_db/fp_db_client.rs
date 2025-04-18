@@ -1,4 +1,3 @@
-use log::info;
 use crate::config::FpDbConfig;
 use crate::services::fp_db::models::group::Group;
 use crate::services::fp_db::models::user::User;

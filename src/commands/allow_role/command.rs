@@ -1,13 +1,14 @@
 use crate::commands::allow_role::errors::{AllowRoleError};
 use crate::commands::allow_role::forbidden_permission::FORBIDDEN_PERMISSIONS;
-use crate::commands::common::autocomplete::existing_roles::autocomplete_existing_roles;
+use crate::commands::common::autocomplete::existing_roles::{autocomplete_existing_roles, EXISTING_ROLE_NAME_CACHE};
 use crate::commands::common::macros::ok_or_respond_with_error;
 use crate::Context;
 use anyhow::{anyhow, Error};
 use crate::commands::common::error::command_error::CommandError;
 use crate::commands::common::error::models::bad_permissions::BadPermissions;
 
-#[poise::command(slash_command, rename = "allow", user_cooldown = 5, guild_only)]
+#[poise::command(slash_command, rename = "allow_role", user_cooldown = 5, guild_only)]
+/// Allow a role to be assigned to users
 pub async fn allow_role(
     ctx: Context<'_>,
     #[autocomplete = "autocomplete_existing_roles"]
@@ -54,6 +55,8 @@ async fn do_allow_role(ctx: Context<'_>, role: String) -> Result<(), CommandErro
     ctx.say(format!("Allowed role: {}", role.name))
         .await
         .map_err(|e| anyhow!(e))?;
+
+    EXISTING_ROLE_NAME_CACHE.clear().await;
 
     Ok(())
 }

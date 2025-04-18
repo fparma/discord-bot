@@ -4,7 +4,7 @@ use std::sync::{Arc, LazyLock};
 use std::time::{Duration, Instant};
 use tokio::sync::Mutex;
 
-static EXISTING_ROLE_NAME_CACHE: LazyLock<ExistingRoleNameCache> =
+pub static EXISTING_ROLE_NAME_CACHE: LazyLock<ExistingRoleNameCache> =
     LazyLock::new(ExistingRoleNameCache::new);
 
 pub async fn autocomplete_existing_roles(
@@ -23,7 +23,7 @@ pub async fn autocomplete_existing_roles(
 }
 
 #[derive(Debug)]
-struct ExistingRoleNameCache {
+pub struct ExistingRoleNameCache {
     cache: Arc<Mutex<(Vec<String>, Instant)>>,
 }
 
@@ -37,7 +37,7 @@ impl ExistingRoleNameCache {
         }
     }
 
-    async fn get(&self, ctx: &Context<'_>) -> Vec<String> {
+    pub async fn get(&self, ctx: &Context<'_>) -> Vec<String> {
         let mut cache = self.cache.lock().await;
         if cache.1.elapsed() > Duration::from_secs(60) {
             let existing_roles: Vec<_> = ctx
@@ -55,5 +55,11 @@ impl ExistingRoleNameCache {
         }
 
         cache.0.clone()
+    }
+
+    pub async fn clear(&self) {
+        let mut cache = self.cache.lock().await;
+        cache.0.clear();
+        cache.1 = Instant::now() - Duration::from_secs(120);
     }
 }

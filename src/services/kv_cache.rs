@@ -1,5 +1,5 @@
 use serde::de::DeserializeOwned;
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 
 static EVENT_CACHE_PATH: &str = "/tmp/discord_bot_cache";
 

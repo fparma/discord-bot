@@ -7,3 +7,4 @@ pub mod models;
 pub mod remove_role;
 pub mod stats;
 pub mod upload;
+pub mod list_roles;

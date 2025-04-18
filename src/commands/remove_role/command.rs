@@ -7,7 +7,8 @@ use anyhow::{anyhow, Error};
 use poise::serenity_prelude::{Role, RoleId};
 use crate::commands::common::error::command_error::CommandError;
 
-#[poise::command(slash_command, rename = "remove", user_cooldown = 5, guild_only)]
+#[poise::command(slash_command, rename = "remove_role", user_cooldown = 5, guild_only)]
+/// Remove a role from yourself
 pub async fn remove_role(
     ctx: Context<'_>,
     #[autocomplete = "autocomplete_allowed_roles"]

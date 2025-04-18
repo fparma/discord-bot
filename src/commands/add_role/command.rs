@@ -10,11 +10,12 @@ use crate::commands::common::error::command_error::CommandError;
 
 #[poise::command(
     slash_command,
-    rename = "add",
+    rename = "get_role",
     user_cooldown = 5,
     guild_only,
     required_bot_permissions = "MANAGE_ROLES"
 )]
+/// Add a role to yourself
 pub async fn add_role(
     ctx: Context<'_>,
     #[autocomplete = "autocomplete_existing_roles"]

@@ -10,6 +10,7 @@ use poise::builtins;
 use poise::serenity_prelude::Command;
 use tracing::{debug, error};
 use crate::commands::forbid_role::command::forbid_role;
+use crate::commands::list_roles::list_roles;
 
 pub fn get_options() -> poise::FrameworkOptions<Arc<AppState>, anyhow::Error> {
     poise::FrameworkOptions {
@@ -20,7 +21,8 @@ pub fn get_options() -> poise::FrameworkOptions<Arc<AppState>, anyhow::Error> {
             allow_role(),
             add_role(),
             remove_role(),
-            forbid_role()
+            forbid_role(),
+            list_roles()
         ],
         on_error: |error| Box::pin(on_error(error)),
         pre_command: |ctx| {
