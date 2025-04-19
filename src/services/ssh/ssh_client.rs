@@ -1,4 +1,3 @@
-use std::mem;
 use crate::commands::models::pbo_name::PboName;
 use crate::commands::models::repo::Repo;
 use crate::commands::upload::errors::PboUploadError;
@@ -7,6 +6,7 @@ use log::info;
 use openssh::{Session, SessionBuilder};
 use openssh_sftp_client::{Sftp, SftpOptions};
 use poise::futures_util::{StreamExt, TryFutureExt};
+use std::mem;
 use std::path::{Path, PathBuf};
 use tokio::sync::Semaphore;
 use tracing::error;
@@ -103,14 +103,11 @@ impl SshClient {
 
         let ssh = get_ssh_session(self).await?;
 
-        let restart_path = PathBuf::new()
-            .join(&self.ftp_path_config.repos_folder_path)
-            .join("restart.sh");
-
-        let restart_command = format!("bash {}", restart_path.display());
+        let restart_path = format!("{}/restart.sh", self.ftp_path_config.repos_folder_path);
 
         let exit_code = ssh
-            .command(restart_command.as_str())
+            .command("bash")
+            .arg(restart_path)
             .spawn()
             .await
             .map_err(|e| anyhow::anyhow!("Failed to restart server: {}", e))?
