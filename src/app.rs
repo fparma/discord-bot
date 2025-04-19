@@ -9,6 +9,7 @@ use crate::state::AppState;
 use poise::builtins;
 use poise::serenity_prelude::Command;
 use tracing::{debug, error};
+use crate::commands::deploy_repo::deploy_repo;
 use crate::commands::forbid_role::command::forbid_role;
 use crate::commands::list_roles::list_roles;
 use crate::commands::restart_server::restart_server;
@@ -24,7 +25,8 @@ pub fn get_options() -> poise::FrameworkOptions<Arc<AppState>, anyhow::Error> {
             remove_role(),
             forbid_role(),
             list_roles(),
-            restart_server()
+            restart_server(),
+            deploy_repo()
         ],
         on_error: |error| Box::pin(on_error(error)),
         pre_command: |ctx| {

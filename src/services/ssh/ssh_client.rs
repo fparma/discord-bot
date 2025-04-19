@@ -1,3 +1,4 @@
+use crate::commands::models::cdlc::CDlc;
 use crate::commands::models::pbo_name::PboName;
 use crate::commands::models::repo::Repo;
 use crate::commands::upload::errors::PboUploadError;
@@ -109,8 +110,40 @@ impl SshClient {
             .command("bash")
             .arg(restart_path)
             .spawn()
-            .await
-            .map_err(|e| anyhow::anyhow!("Failed to restart server: {}", e))?
+            .await?
+            .wait()
+            .await?;
+
+        if !exit_code.success() {
+            error!("Failed to restart server, exit code: {}", exit_code);
+            return Err(anyhow::anyhow!(
+                "Failed to restart server, exit code: {}",
+                exit_code
+            ));
+        }
+
+        mem::drop(permit);
+
+        Ok(())
+    }
+
+    pub async fn deploy_repo(&self, repo: Repo, c_dlc: CDlc) -> Result<(), anyhow::Error> {
+        let permit = self.semaphore.try_acquire()?;
+
+        let ssh = get_ssh_session(self).await?;
+
+        let deploy_script_path = format!(
+            "{}/deploy-manager-non-interactive.sh",
+            self.ftp_path_config.repos_folder_path
+        );
+
+        let exit_code = ssh
+            .command("bash")
+            .arg(deploy_script_path)
+            .arg(repo.to_string())
+            .arg(c_dlc.to_string())
+            .spawn()
+            .await?
             .wait()
             .await?;
 
