@@ -1,0 +1,14 @@
+services:
+  bot:
+    build:
+      context: .
+    env_file:
+      - .env
+    volumes:
+      - ./key:/env/key
+      - bot-cache:/tmp
+    restart:
+        unless-stopped
+
+volumes:
+  bot-cache:
