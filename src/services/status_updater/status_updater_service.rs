@@ -6,12 +6,13 @@ use poise::serenity_prelude::{ActivityData, ShardManager};
 use std::sync::Arc;
 use std::time::Duration;
 use tokio::time::sleep;
+use crate::config::BotConfig;
 
-pub async fn run_status_updater(shard_manager: Arc<ShardManager>, app_state: Arc<AppState>) {
+pub async fn run_status_updater(shard_manager: Arc<ShardManager>, app_state: Arc<AppState>, config: BotConfig) -> ! {
     // Wait a bit for the bot to connect to Discord
     sleep(Duration::from_secs(5)).await;
 
-    let mut interval = tokio::time::interval(Duration::from_secs(30));
+    let mut interval = tokio::time::interval(Duration::from_secs(config.polling_interval));
 
     interval.set_missed_tick_behavior(tokio::time::MissedTickBehavior::Delay);
 

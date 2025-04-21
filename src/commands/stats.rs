@@ -1,4 +1,4 @@
-use crate::commands::common::macros::{ok_or_respond, ok_or_respond_with_error};
+use crate::commands::common::macros::ok_or_respond_with_error;
 
 use crate::commands::common::error::command_error::CommandError;
 use crate::Context;
