@@ -1,10 +1,10 @@
 use crate::config::FpDbConfig;
+use crate::services::fp_db::models::event::Event;
 use crate::services::fp_db::models::group::Group;
 use crate::services::fp_db::models::user::User;
 use mongodb::bson;
 use mongodb::bson::doc;
-use poise::futures_util::{Stream, TryStreamExt};
-use crate::services::fp_db::models::event::Event;
+use poise::futures_util::{Stream, StreamExt, TryStreamExt};
 
 #[derive(Debug, Clone)]
 pub struct FpDbClient {
@@ -47,6 +47,14 @@ impl FpDbClient {
         let count = collection.count_documents(filter).await?;
 
         Ok(count)
+    }
+
+    pub async fn get_user_event_number(&self, name: &str) -> Result<usize, anyhow::Error> {
+        let db = self.mongo_client.database("fparma");
+        let collection = db.collection::<Event>("events");
+        let filter = doc! { "authors": name };
+        let event = collection.find(filter).await?;
+        Ok(event.count().await)
     }
 
     pub async fn find_future_events(&self) -> Result<Vec<Event>, anyhow::Error> {
