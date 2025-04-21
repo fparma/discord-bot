@@ -32,7 +32,8 @@ async fn do_restart_server(ctx: Context<'_>) -> Result<(), CommandError> {
     {
         let reply = CreateReply::default()
             .content("The server is currently not empty. Are you sure you want to restart?")
-            .components(generate_yes_no_buttons());
+            .components(generate_yes_no_buttons())
+            .ephemeral(true);
 
         let handle = ctx.send(reply).await?;
 

@@ -37,7 +37,8 @@ async fn do_deploy_repo(ctx: Context<'_>, repo: Repo, c_dlc: CDlc) -> Result<(),
     {
         let reply = CreateReply::default()
             .content("The server is currently not empty. Are you sure you want to deploy?")
-            .components(generate_yes_no_buttons());
+            .components(generate_yes_no_buttons())
+            .ephemeral(true);
 
         let handle = ctx.send(reply).await?;
 

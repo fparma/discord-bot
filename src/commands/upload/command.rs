@@ -127,4 +127,5 @@ fn create_repo_reply() -> CreateReply {
     CreateReply::default()
         .content("Select a repo")
         .components(components)
+        .ephemeral(true)
 }
