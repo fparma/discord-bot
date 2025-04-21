@@ -26,7 +26,15 @@ pub async fn deploy_repo(ctx: Context<'_>, repo: Repo, c_dlc: Option<CDlc>) -> R
 }
 
 async fn do_deploy_repo(ctx: Context<'_>, repo: Repo, c_dlc: CDlc) -> Result<(), CommandError> {
-    let handle = if ctx.data().server_info.get_server_info()?.current_players != 0 {
+    ctx.defer().await?;
+    
+    let handle = if ctx
+        .data()
+        .server_info
+        .get_active_player_count()
+        .map(|c| c != 0)
+        .unwrap_or_default()
+    {
         let reply = CreateReply::default()
             .content("The server is currently not empty. Are you sure you want to deploy?")
             .components(generate_yes_no_buttons());
@@ -54,7 +62,7 @@ async fn do_deploy_repo(ctx: Context<'_>, repo: Repo, c_dlc: CDlc) -> Result<(),
         ctx.send(text_reply("Server is empty. Deploying..."))
             .await?
     };
-
+    
     match ctx.data().ssh_client.deploy_repo(repo, c_dlc).await {
         Ok(_) => {
             handle
@@ -66,6 +74,6 @@ async fn do_deploy_repo(ctx: Context<'_>, repo: Repo, c_dlc: CDlc) -> Result<(),
             return Err(anyhow!("Failed to deploy: {}", e).into());
         }
     }
-
+    
     Ok(())
 }

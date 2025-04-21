@@ -21,7 +21,15 @@ pub async fn restart_server(ctx: Context<'_>) -> Result<(), Error> {
 }
 
 async fn do_restart_server(ctx: Context<'_>) -> Result<(), CommandError> {
-    let handle = if ctx.data().server_info.get_server_info()?.current_players != 0 {
+    ctx.defer().await?;
+
+    let handle = if ctx
+        .data()
+        .server_info
+        .get_active_player_count()
+        .map(|c| c != 0)
+        .unwrap_or_default()
+    {
         let reply = CreateReply::default()
             .content("The server is currently not empty. Are you sure you want to restart?")
             .components(generate_yes_no_buttons());

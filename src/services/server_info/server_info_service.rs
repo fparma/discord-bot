@@ -21,4 +21,10 @@ impl ServerInfoService {
         
         Ok(game_inf.into())
     }
+    
+    pub fn get_active_player_count(&self) -> Result<u8, Error> {
+        let game_inf: Response = gamedig::arma3::query(&self.server_ip, None)?;
+        
+        Ok(game_inf.players_online)
+    }
 }
