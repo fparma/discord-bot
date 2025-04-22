@@ -28,7 +28,7 @@ impl FpDbClient {
         let collection = db.collection::<User>("users");
         let filter = doc! {
             "$or": [
-                { "name": username_or_steam_id },
+                { "name": "/{username_or_steam_id}$/i" },
                 { "steam_id": username_or_steam_id }
             ]
         };
