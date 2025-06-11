@@ -2,6 +2,7 @@ use crate::commands::upload::errors::PboUploadError;
 use anyhow::anyhow;
 use std::path::PathBuf;
 use std::process::Stdio;
+use log::debug;
 use tracing::info;
 use uuid::Uuid;
 
@@ -24,7 +25,7 @@ pub async fn lint_pbo(pbo_path: &PathBuf) -> Result<(), PboUploadError> {
     lint.arg("-WP")
         .arg(folder)
         .arg(format!("{}.pbo", Uuid::new_v4()))
-        .stdout(Stdio::piped());
+        .stderr(Stdio::piped());
 
     info!("Linting PBO");
 
@@ -34,12 +35,14 @@ pub async fn lint_pbo(pbo_path: &PathBuf) -> Result<(), PboUploadError> {
         return Ok(());
     }
 
-    let out = String::from_utf8_lossy(&res.stdout);
-/*    let err = String::from_utf8_lossy(&res.stderr);
-    let out = format!("{}\n{}", out, err);*/
-    let errors = out
+    let errors = String::from_utf8_lossy(&res.stderr);
+
+    debug!("Lint output: {}", errors);
+
+    let errors = errors
         .lines()
-        .filter(|str| str.contains(folder.to_str().unwrap()))
+        // First 6 lines are not useful
+        .skip(6)
         .map(|str| str.to_string())
         .map(|str| str.replace(folder.to_str().unwrap(), "").trim().to_owned())
         .collect::<Vec<_>>()
