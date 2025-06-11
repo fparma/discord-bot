@@ -29,11 +29,11 @@ pub async fn do_upload(
     if let Err(e) = res {
         ctx.say(format!("{}", e)).await?;
     }
-    
+
     if let Err(e) = cleanup_pbo_folder(&folder).await {
         ctx.say(format!("Failed to clean up temporary folder: {}", e)).await?;
     }
-    
+
     Ok(())
 }
 

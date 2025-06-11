@@ -21,18 +21,18 @@ impl PboName {
             .captures(name)
             .ok_or(PboNameError::InvalidFormat)?;
 
-        let name = matches
+       let name = matches
             .get(1)
             .ok_or(PboNameError::InvalidMapName)?
             .as_str()
-            .to_string()
+            .to_owned()
             .to_lowercase();
 
         let map = matches
             .get(2)
             .ok_or(PboNameError::InvalidPboName)?
             .as_str()
-            .to_string()
+            .to_owned()
             .to_lowercase();
 
         Ok(Self { name, map })

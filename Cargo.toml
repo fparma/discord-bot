@@ -21,8 +21,6 @@ uuid = { version = "1.16.0" , features = ["v4"]}
 thiserror = "2.0.12"
 log = "0.4.27"
 regex = "1.11.1"
-# TODO: replace with actual version once available
-# PR: https://github.com/gamedig/rust-gamedig/pull/240
-gamedig = {git = "https://github.com/Perondas/rust-gamedig.git"}
+gamedig = "0.7.0"
 sled = "0.34.7"
 bincode = { version = "2.0.1" , features = ["serde"]}
