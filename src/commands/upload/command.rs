@@ -29,9 +29,11 @@ pub async fn do_upload(
     if let Err(e) = res {
         ctx.say(format!("{}", e)).await?;
     }
-
-    //ok_or_respond_with_error!(&ctx, cleanup_pbo_folder(&folder).await);
-
+    
+    if let Err(e) = cleanup_pbo_folder(&folder).await {
+        ctx.say(format!("Failed to clean up temporary folder: {}", e)).await?;
+    }
+    
     Ok(())
 }
 
