@@ -1,5 +1,6 @@
 use crate::commands::upload::errors::PboUploadError;
 use anyhow::anyhow;
+use log::warn;
 use std::path::PathBuf;
 use tracing::info;
 use uuid::Uuid;
@@ -33,9 +34,7 @@ pub async fn lint_pbo(pbo_path: &PathBuf) -> Result<(), PboUploadError> {
     }
 
     match res.status.code() {
-        None => Err(PboUploadError::LintError),
-        Some(13) => Err(PboUploadError::LintError),
-        Some(17 | 87) => {
+        Some(13 | 17 | 87) => {
             let errors = String::from_utf8_lossy(&res.stdout);
             let errors = errors
                 .lines()
@@ -47,8 +46,11 @@ pub async fn lint_pbo(pbo_path: &PathBuf) -> Result<(), PboUploadError> {
 
             Err(PboUploadError::LintErrors(errors))
         }
-        Some(_) => {
-            // Linting passed
+        _ => {
+            warn!(
+                "PBO linting failed with unexpected status code: {:?}",
+                res.status.code()
+            );
             Err(PboUploadError::LintError)
         }
     }
