@@ -1,7 +1,6 @@
 .vscode
 # app
 bla.pbo
-.env
 env
 cache.json
 temp
