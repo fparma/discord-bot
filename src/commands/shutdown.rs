@@ -23,11 +23,11 @@ pub async fn shutdown(ctx: Context<'_>) -> Result<(), Error> {
         .ok_or(anyhow!("No interaction received"))?;
 
     if interaction.data.custom_id == "no" {
-        handle.edit(ctx, text_reply("Cancelled deploy")).await?;
+        handle.edit(ctx, text_reply("Cancelled")).await?;
         return Ok(());
     }
 
-    ctx.say("Shutting down...").await?;
+    handle.edit(ctx, text_reply("Shutting down")).await?;
 
     exit(0);
 }
