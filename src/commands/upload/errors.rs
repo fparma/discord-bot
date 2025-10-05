@@ -20,16 +20,16 @@ pub enum PboUploadError {
     LintErrors(String),
     #[error("Error uploading PBO")]
     UploadError,
-    #[error("Error connecting to the arma server")]
+    #[error("Error connecting to the arma server: {0}")]
     SftpError(#[from] openssh_sftp_client::Error),
     #[error("Unknown error: {0}")]
     UnknownError(#[from] anyhow::Error),
-    #[error("Discord error")]
+    #[error("Discord error: {0}")]
     SerenityError(#[from] serenity_prelude::Error),
     #[error("PBO name is not valid: {0}")]
     InvalidPboName(#[from] PboNameError),
-    #[error("Network error")]
+    #[error("Network error: {0}")]
     DownloadError(#[from] reqwest::Error),
-    #[error("IO error")]
+    #[error("IO error: {0}")]
     IoError(#[from] std::io::Error),
 }
