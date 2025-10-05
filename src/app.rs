@@ -13,6 +13,7 @@ use crate::commands::deploy_repo::deploy_repo;
 use crate::commands::forbid_role::command::forbid_role;
 use crate::commands::list_roles::list_roles;
 use crate::commands::restart_server::restart_server;
+use crate::commands::shutdown::shutdown;
 
 pub fn get_options() -> poise::FrameworkOptions<Arc<AppState>, anyhow::Error> {
     poise::FrameworkOptions {
@@ -26,7 +27,8 @@ pub fn get_options() -> poise::FrameworkOptions<Arc<AppState>, anyhow::Error> {
             forbid_role(),
             list_roles(),
             restart_server(),
-            deploy_repo()
+            deploy_repo(),
+            shutdown()
         ],
         on_error: |error| Box::pin(on_error(error)),
         pre_command: |ctx| {
