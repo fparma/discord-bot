@@ -23,7 +23,7 @@ pub async fn run_status_updater(shard_manager: Arc<ShardManager>, app_state: Arc
 
         let shards = shard_manager.runners.lock().await;
 
-        for (_, shard) in shards.iter() {
+        for shard in shards.values() {
             shard.runner_tx.set_activity(Some(status.clone()));
         }
     }

@@ -1,8 +1,10 @@
 use crate::commands::models::pbo_name::PboNameError;
 use poise::serenity_prelude;
+use this_error_from_box::this_error_from_box;
 use thiserror::Error;
 
 #[derive(Debug, Error)]
+#[this_error_from_box]
 pub enum PboUploadError {
     #[error("No attachment found")]
     NoAttachment,
@@ -25,7 +27,7 @@ pub enum PboUploadError {
     #[error("Unknown error: {0}")]
     UnknownError(#[from] anyhow::Error),
     #[error("Discord error: {0}")]
-    SerenityError(#[from] serenity_prelude::Error),
+    SerenityError(#[from] Box<serenity_prelude::Error>),
     #[error("PBO name is not valid: {0}")]
     InvalidPboName(#[from] PboNameError),
     #[error("Network error: {0}")]
