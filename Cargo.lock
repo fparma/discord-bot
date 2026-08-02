@@ -711,7 +711,7 @@ dependencies = [
  "serde",
  "sled",
  "this-error-from-box",
- "thiserror 2.0.12",
+ "thiserror 2.0.19",
  "tokio",
  "tracing",
  "tracing-subscriber",
@@ -1774,7 +1774,7 @@ dependencies = [
  "openssh-mux-client",
  "shell-escape",
  "tempfile",
- "thiserror 2.0.12",
+ "thiserror 2.0.19",
  "tokio",
 ]
 
@@ -1803,7 +1803,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9879168afb48a235200e30d93df320b7191568cda8621df02f145c1c0f1af95a"
 dependencies = [
  "ssh_format_error",
- "thiserror 2.0.12",
+ "thiserror 2.0.19",
 ]
 
 [[package]]
@@ -1853,7 +1853,7 @@ dependencies = [
  "openssh",
  "openssh-sftp-protocol-error",
  "ssh_format_error",
- "thiserror 2.0.12",
+ "thiserror 2.0.19",
  "tokio",
 ]
 
@@ -1879,7 +1879,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "42b54df62ccfd9a7708a83a9d60c46293837e478f9f4c0829360dcfa60ede8d2"
 dependencies = [
  "serde",
- "thiserror 2.0.12",
+ "thiserror 2.0.19",
  "vec-strings",
 ]
 
@@ -2934,6 +2934,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "syn"
+version = "3.0.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "53e9bae58849f64dfa4f5d5ae372c8341f7305f82a3868709269343628b659a3"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "unicode-ident",
+]
+
+[[package]]
 name = "sync_wrapper"
 version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3059,11 +3070,11 @@ dependencies = [
 
 [[package]]
 name = "thiserror"
-version = "2.0.12"
+version = "2.0.19"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "567b8a2dae586314f7be2a752ec7474332959c6460e02bde30d702a66d488708"
+checksum = "09a43598840e33d5b0331f38c5e30d13bb11c11210a4b58f0d9b18a5a5eefcd9"
 dependencies = [
- "thiserror-impl 2.0.12",
+ "thiserror-impl 2.0.19",
 ]
 
 [[package]]
@@ -3079,13 +3090,13 @@ dependencies = [
 
 [[package]]
 name = "thiserror-impl"
-version = "2.0.12"
+version = "2.0.19"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7f7cf42b4507d8ea322120659672cf1b9dbb93f8f2d4ecfd6e51350ff5b17a1d"
+checksum = "43cbfe0cf76104d42a574802844187e84a305e531ed54455f11fbde0f10541cd"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.119",
+ "syn 3.0.3",
 ]
 
 [[package]]
