@@ -1,5 +1,5 @@
 use crate::Context;
-use poise::serenity_prelude::{AutocompleteChoice, RoleId};
+use poise::serenity_prelude::{AutocompleteChoice, CreateAutocompleteResponse, RoleId};
 use std::sync::{Arc, LazyLock};
 use std::time::{Duration, Instant};
 use tokio::sync::Mutex;
@@ -9,16 +9,16 @@ static ALLOWED_ROLE_NAME_CACHE: LazyLock<RoleNameCache> = LazyLock::new(RoleName
 pub async fn autocomplete_allowed_roles(
     ctx: Context<'_>,
     partial: &str,
-) -> impl Iterator<Item = AutocompleteChoice> {
+) -> CreateAutocompleteResponse {
     let allowed_roles = ALLOWED_ROLE_NAME_CACHE.get(&ctx).await;
 
-    let result: Vec<_> = allowed_roles
+    let choices = allowed_roles
         .into_iter()
         .filter(|role| role.starts_with(partial))
         .map(|role| AutocompleteChoice::new(role.clone(), role))
         .collect();
 
-    result.into_iter()
+    CreateAutocompleteResponse::new().set_choices(choices)
 }
 
 #[derive(Debug)]

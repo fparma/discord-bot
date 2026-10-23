@@ -43,7 +43,7 @@ pub fn get_options() -> poise::FrameworkOptions<Arc<AppState>, anyhow::Error> {
             })
         },
 
-        event_handler: |_context, _, _framework, _state| Box::pin(async move { Ok(()) }),
+        event_handler: |_framework, _event| Box::pin(async move { Ok(()) }),
         ..Default::default()
     }
 }
