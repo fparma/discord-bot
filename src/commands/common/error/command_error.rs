@@ -1,3 +1,4 @@
+use this_error_from_box::this_error_from_box;
 use crate::commands::add_role::errors::AddRoleError;
 use crate::commands::allow_role::errors::AllowRoleError;
 use crate::commands::forbid_role::errors::ForbidRoleError;
@@ -5,6 +6,7 @@ use crate::commands::remove_role::errors::RemoveRoleError;
 use thiserror::Error;
 
 #[derive(Debug, Error)]
+#[this_error_from_box]
 pub enum CommandError {
     #[error("{0}")]
     AddRoleError(#[from] AddRoleError),
@@ -17,5 +19,5 @@ pub enum CommandError {
     #[error("An unexpected error occurred: {0:?}")]
     UnknownError(#[from] anyhow::Error),
     #[error("Discord error: {0}")]
-    DiscordError(#[from] poise::serenity_prelude::Error),
+    DiscordError(#[from] Box<poise::serenity_prelude::Error>),
 }
