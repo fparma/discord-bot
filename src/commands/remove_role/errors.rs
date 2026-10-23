@@ -8,5 +8,3 @@ pub enum RemoveRoleError {
     #[error("Roles not Found: {0}")]
     RoleNotAllowed(BadRoles),
 }
-
-

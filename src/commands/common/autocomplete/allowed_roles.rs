@@ -11,13 +11,13 @@ pub async fn autocomplete_allowed_roles(
     partial: &str,
 ) -> impl Iterator<Item = AutocompleteChoice> {
     let allowed_roles = ALLOWED_ROLE_NAME_CACHE.get(&ctx).await;
-    
+
     let result: Vec<_> = allowed_roles
         .into_iter()
         .filter(|role| role.starts_with(partial))
         .map(|role| AutocompleteChoice::new(role.clone(), role))
         .collect();
-    
+
     result.into_iter()
 }
 
@@ -45,9 +45,9 @@ impl RoleNameCache {
                 .get_allowed_roles()
                 .await
                 .unwrap_or_default();
-            
+
             let guild_roles = ctx.guild().unwrap().roles.clone();
-            
+
             let role_names = allowed_roles_ids
                 .iter()
                 .filter_map(|role_id| {
@@ -56,7 +56,7 @@ impl RoleNameCache {
                         .map(|role| role.name.clone())
                 })
                 .collect::<Vec<_>>();
-            
+
             cache.0 = role_names;
             cache.1 = Instant::now();
         }

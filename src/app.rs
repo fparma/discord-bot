@@ -1,19 +1,19 @@
-use std::sync::Arc;
 use crate::commands::add_role::command::add_role;
 use crate::commands::allow_role::command::allow_role;
+use crate::commands::deploy_repo::deploy_repo;
 use crate::commands::deployed::get_deployed;
+use crate::commands::forbid_role::command::forbid_role;
+use crate::commands::list_roles::list_roles;
 use crate::commands::remove_role::command::remove_role;
+use crate::commands::restart_server::restart_server;
+use crate::commands::shutdown::shutdown;
 use crate::commands::stats::get_stats;
 use crate::commands::upload::command::do_upload;
 use crate::state::AppState;
 use poise::builtins;
 use poise::serenity_prelude::Command;
+use std::sync::Arc;
 use tracing::{debug, error};
-use crate::commands::deploy_repo::deploy_repo;
-use crate::commands::forbid_role::command::forbid_role;
-use crate::commands::list_roles::list_roles;
-use crate::commands::restart_server::restart_server;
-use crate::commands::shutdown::shutdown;
 
 pub fn get_options() -> poise::FrameworkOptions<Arc<AppState>, anyhow::Error> {
     poise::FrameworkOptions {
@@ -28,7 +28,7 @@ pub fn get_options() -> poise::FrameworkOptions<Arc<AppState>, anyhow::Error> {
             list_roles(),
             restart_server(),
             deploy_repo(),
-            shutdown()
+            shutdown(),
         ],
         on_error: |error| Box::pin(on_error(error)),
         pre_command: |ctx| {
@@ -43,11 +43,7 @@ pub fn get_options() -> poise::FrameworkOptions<Arc<AppState>, anyhow::Error> {
             })
         },
 
-        event_handler: |_context, _, _framework, _state| {
-            Box::pin(async move {
-                Ok(())
-            })
-        },
+        event_handler: |_context, _, _framework, _state| Box::pin(async move { Ok(()) }),
         ..Default::default()
     }
 }

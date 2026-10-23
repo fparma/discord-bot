@@ -1,5 +1,5 @@
-use mongodb::bson::DateTime;
 use mongodb::bson::oid::ObjectId;
+use mongodb::bson::DateTime;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -10,5 +10,5 @@ pub struct Event {
     pub permalink: String,
     pub authors: String,
     pub image_url: String,
-    pub date: DateTime
+    pub date: DateTime,
 }

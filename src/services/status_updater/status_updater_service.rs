@@ -1,3 +1,4 @@
+use crate::config::BotConfig;
 use crate::services::server_info::server_details::ServerDetails;
 use crate::state::AppState;
 use anyhow::Error;
@@ -6,9 +7,12 @@ use poise::serenity_prelude::{ActivityData, ShardManager};
 use std::sync::Arc;
 use std::time::Duration;
 use tokio::time::sleep;
-use crate::config::BotConfig;
 
-pub async fn run_status_updater(shard_manager: Arc<ShardManager>, app_state: Arc<AppState>, config: BotConfig) -> ! {
+pub async fn run_status_updater(
+    shard_manager: Arc<ShardManager>,
+    app_state: Arc<AppState>,
+    config: BotConfig,
+) -> ! {
     // Wait a bit for the bot to connect to Discord
     sleep(Duration::from_secs(5)).await;
 

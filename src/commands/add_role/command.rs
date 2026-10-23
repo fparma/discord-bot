@@ -1,12 +1,12 @@
 use crate::commands::add_role::errors::AddRoleError;
 use crate::commands::common::autocomplete::existing_roles::autocomplete_existing_roles;
+use crate::commands::common::error::command_error::CommandError;
 use crate::commands::common::macros::ok_or_respond_with_error;
 use crate::commands::models::bad_roles::BadRoles;
 use crate::Context;
 use anyhow::{anyhow, Error};
 use poise::serenity_prelude::{Role, RoleId};
 use tracing::info;
-use crate::commands::common::error::command_error::CommandError;
 
 #[poise::command(
     slash_command,
@@ -75,9 +75,7 @@ async fn do_add_role(ctx: Context<'_>, roles: Vec<String>) -> Result<(), Command
         .collect();
 
     if !not_allowed_roles.is_empty() {
-        return Err(AddRoleError::RoleNotAllowed(BadRoles::new(
-            not_allowed_roles,
-        )).into());
+        return Err(AddRoleError::RoleNotAllowed(BadRoles::new(not_allowed_roles)).into());
     }
 
     let member = ctx
@@ -87,10 +85,7 @@ async fn do_add_role(ctx: Context<'_>, roles: Vec<String>) -> Result<(), Command
 
     info!("Member: {:?}", member);
 
-    let desired_roles_ids: Vec<_> = desired_roles
-        .into_iter()
-        .map(|(id, _)| *id)
-        .collect();
+    let desired_roles_ids: Vec<_> = desired_roles.into_iter().map(|(id, _)| *id).collect();
 
     member
         .add_roles(&ctx, &desired_roles_ids)

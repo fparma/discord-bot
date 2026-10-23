@@ -1,5 +1,5 @@
-use std::net::IpAddr;
 use envconfig::Envconfig;
+use std::net::IpAddr;
 
 #[derive(Envconfig, Debug, Clone)]
 pub struct Config {

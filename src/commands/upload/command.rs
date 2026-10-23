@@ -31,7 +31,8 @@ pub async fn do_upload(
     }
 
     if let Err(e) = cleanup_pbo_folder(&folder).await {
-        ctx.say(format!("Failed to clean up temporary folder: {}", e)).await?;
+        ctx.say(format!("Failed to clean up temporary folder: {}", e))
+            .await?;
     }
 
     Ok(())
@@ -43,7 +44,8 @@ async fn do_upload_body(
     folder_name: &str,
 ) -> Result<(), PboUploadError> {
     let file = msg
-        .attachments.first()
+        .attachments
+        .first()
         .ok_or_else(|| PboUploadError::NoAttachment)?;
 
     let url = Url::parse(&file.url).map_err(|_| PboUploadError::BadAttachment)?;

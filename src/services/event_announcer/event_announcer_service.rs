@@ -1,14 +1,16 @@
+use crate::config::BotConfig;
 use crate::services::event_announcer::event_announcement_state::EventAnnouncementState;
 use crate::services::fp_db::models::event::Event;
 use crate::services::kv_cache::KVCache;
 use crate::state::AppState;
 use log::error;
 use mongodb::bson::DateTime;
-use poise::serenity_prelude::{ChannelId, CreateAllowedMentions, CreateEmbed, CreateMessage, Http, Mention, RoleId};
+use poise::serenity_prelude::{
+    ChannelId, CreateAllowedMentions, CreateEmbed, CreateMessage, Http, Mention, RoleId,
+};
 use std::sync::Arc;
 use std::time::Duration;
 use tokio::time::sleep;
-use crate::config::BotConfig;
 
 pub async fn run_event_announcer(client: Arc<Http>, state: Arc<AppState>, config: BotConfig) -> ! {
     // Wait a bit for the bot to connect to Discord
@@ -84,7 +86,10 @@ fn event_to_message(event: &Event, cache: &KVCache) -> Option<Vec<CreateMessage>
     {
         let message = CreateMessage::default()
             .allowed_mentions(CreateAllowedMentions::new().all_roles(true))
-            .content(format!(":joystick: Event is go in 30 minutes! {}", arma_event_mention))
+            .content(format!(
+                ":joystick: Event is go in 30 minutes! {}",
+                arma_event_mention
+            ))
             .embed(embed.clone());
 
         messages.push(message);

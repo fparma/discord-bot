@@ -14,7 +14,10 @@ impl KVCache {
         Ok(KVCache { db })
     }
 
-    pub fn get<K: AsRef<[u8]>, V: DeserializeOwned>(&self, key: K) -> Result<Option<V>, anyhow::Error> {
+    pub fn get<K: AsRef<[u8]>, V: DeserializeOwned>(
+        &self,
+        key: K,
+    ) -> Result<Option<V>, anyhow::Error> {
         match self.db.get(key)? {
             Some(value) => bincode::serde::decode_from_slice(&value, bincode::config::standard())
                 .map(|(s, _)| Some(s))

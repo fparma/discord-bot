@@ -27,7 +27,7 @@ pub async fn deploy_repo(ctx: Context<'_>, repo: Repo, c_dlc: Option<CDlc>) -> R
 
 async fn do_deploy_repo(ctx: Context<'_>, repo: Repo, c_dlc: CDlc) -> Result<(), CommandError> {
     ctx.defer().await?;
-    
+
     let handle = if ctx
         .data()
         .server_info
@@ -63,7 +63,7 @@ async fn do_deploy_repo(ctx: Context<'_>, repo: Repo, c_dlc: CDlc) -> Result<(),
         ctx.send(text_reply("Server is empty. Deploying..."))
             .await?
     };
-    
+
     match ctx.data().ssh_client.deploy_repo(repo, c_dlc).await {
         Ok(_) => {
             handle
@@ -75,6 +75,6 @@ async fn do_deploy_repo(ctx: Context<'_>, repo: Repo, c_dlc: CDlc) -> Result<(),
             return Err(anyhow!("Failed to deploy: {}", e).into());
         }
     }
-    
+
     Ok(())
 }

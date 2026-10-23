@@ -21,7 +21,7 @@ impl PboName {
             .captures(name)
             .ok_or(PboNameError::InvalidFormat)?;
 
-       let name = matches
+        let name = matches
             .get(1)
             .ok_or(PboNameError::InvalidMapName)?
             .as_str()

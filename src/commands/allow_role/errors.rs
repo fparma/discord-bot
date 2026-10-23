@@ -1,5 +1,5 @@
-use thiserror::Error;
 pub(crate) use crate::commands::common::error::models::bad_permissions::BadPermissions;
+use thiserror::Error;
 
 #[derive(Debug, Error)]
 pub enum AllowRoleError {

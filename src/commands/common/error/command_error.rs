@@ -1,8 +1,8 @@
 use crate::commands::add_role::errors::AddRoleError;
 use crate::commands::allow_role::errors::AllowRoleError;
-use thiserror::Error;
 use crate::commands::forbid_role::errors::ForbidRoleError;
 use crate::commands::remove_role::errors::RemoveRoleError;
+use thiserror::Error;
 
 #[derive(Debug, Error)]
 pub enum CommandError {

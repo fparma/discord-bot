@@ -11,7 +11,7 @@ pub struct AppState {
     pub bot_db_client: BotDbClient,
     pub ssh_client: SshClient,
     pub server_info: ServerInfoService,
-    pub kv_cache: KVCache
+    pub kv_cache: KVCache,
 }
 
 impl AppState {
@@ -27,7 +27,7 @@ impl AppState {
             ssh_client,
             bot_db_client,
             server_info,
-            kv_cache
+            kv_cache,
         })
     }
 }
