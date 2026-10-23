@@ -1,4 +1,4 @@
-FROM rust:bullseye AS chef
+FROM rust:trixie AS chef
 
 RUN cargo install cargo-chef
 WORKDIR /bot
@@ -15,7 +15,7 @@ RUN cargo chef cook --release --recipe-path recipe.json
 COPY . .
 RUN cargo build --release --bin fparma-bot
 
-FROM debian:bullseye AS runtime
+FROM debian:trixie AS runtime
 RUN apt-get update
 RUN apt-get install ca-certificates openssh-client curl liblzo2-2 libvorbis0a libvorbisfile3 libvorbisenc2 libogg0 libuchardet0 -y
 
